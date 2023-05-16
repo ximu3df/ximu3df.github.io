@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/05/16/games101Note/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/logo/logo.png">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/" class="post-title-link" itemprop="url">games101课程笔记1-3</a>
+            <a href="/2023/05/16/games101Note/" class="post-title-link" itemprop="url">games101笔记1-3</a>
         </h2>
 
         <div class="post-meta">
@@ -170,7 +170,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-05-16 11:37:15 / 修改时间：11:44:21" itemprop="dateCreated datePublished" datetime="2023-05-16T11:37:15+08:00">2023-05-16</time>
+              <time title="创建时间：2023-05-16 18:43:30 / 修改时间：18:47:39" itemprop="dateCreated datePublished" datetime="2023-05-16T18:43:30+08:00">2023-05-16</time>
             </span>
 
           
@@ -192,77 +192,129 @@
 <p>在我们表示方向时使用单位向量</p>
 <p><strong>点乘的作用</strong>：光照模型求取法线夹角等、找到一个向量到另一个向量的投影。</p>
 <p><strong>投影的作用</strong>：可以将一个向量分解为两个向量，同时用于组成的两个向量相互垂直。同时可以判断两个向量的方向，如果相同点乘为正，如果不同则为负，如果垂直则为0。</p>
-<p><strong>叉乘</strong>：叉乘的计算结果为向量，且该向量垂直与前两个向量。</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-14-17-09-43.png" class>
-
+<p><strong>叉乘</strong>：叉乘的计算结果为向量，且该向量垂直与前两个向量。<br><img src="/images/2023-05-14-17-09-43.png" alt=""></p>
 <p>上图为叉乘的矩阵计算。</p>
 <p>叉乘计算的作用：判断<strong>左右</strong>以及<strong>内外</strong>。例如判断下图的a在b的哪一侧时，使用叉乘就可以通过结果z向量的正负来判断，如果z为正则在左边，如果为负则为右。</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-14-17-12-36.png" class>
-
-<p>如下图我们可以用来判断<strong>内外</strong>，如果在三角形内，则顶点到p的向量分别叉乘各个边向量，都可以得到同一符号的结果（也就是都在左边或者右边），这样就说明其在内部。</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-14-17-18-27.png" class>
-
+<p><img src="/images/2023-05-14-17-12-36.png" alt=""></p>
+<p>如下图我们可以用来判断<strong>内外</strong>，如果在三角形内，则顶点到p的向量分别叉乘各个边向量，都可以得到同一符号的结果（也就是都在左边或者右边），这样就说明其在内部。<br><img src="/images/2023-05-14-17-18-27.png" alt=""></p>
 <p>这一应用可以用于在光栅化的过程中来判断像素点是否在面片内。</p>
 <h4 id="矩阵："><a href="#矩阵：" class="headerlink" title="矩阵："></a>矩阵：</h4><p>矩阵：二维形式表示的数组。</p>
 <p>这里说明较为麻烦的计算部分：矩阵之间的乘积。</p>
-<p>两个矩阵要是能够相乘则会有：<br>（M x <em>N</em>）（<em>N</em> x P） &#x3D; （M x P）</p>
+<p>两个矩阵要是能够相乘则会有：<br>（M x <em>N</em>）（<em>N</em> x P） = （M x P）</p>
 <p>可以相乘两个矩阵的N是相同的。</p>
 <p>具体数值的计算过程可以通过点乘的性质来计算。</p>
 <p>不满足交换律、满足结合律。</p>
 <p>矩阵的一些操作：</p>
 <p>矩阵的转置</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-14-17-31-00.png" class>
-
+<p><img src="/images/2023-05-14-17-31-00.png" alt=""></p>
 <p>单位矩阵</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-14-17-31-53.png" class>
-
+<p><img src="/images/2023-05-14-17-31-53.png" alt=""></p>
 <p>可以用矩阵的乘法来实现向量的乘法：</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-14-17-35-37.png" class>
-
+<p><img src="/images/2023-05-14-17-35-37.png" alt=""></p>
 <h2 id="第三课"><a href="#第三课" class="headerlink" title="第三课"></a>第三课</h2><p>两种变换：<strong>模型变换</strong>、<strong>视图变换</strong></p>
 <p>2D变换：</p>
 <p>缩放变换</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-09-45-19.png" class>
-
+<p><img src="/images/2023-05-16-09-45-19.png" alt=""></p>
 <p>图片的缩放就是一个2d的缩放变换，将图片的长宽进行线性变换，即</p>
-<h1 id="begin-bmatrix-x’-y’-end-bmatrix"><a href="#begin-bmatrix-x’-y’-end-bmatrix" class="headerlink" title="$$  \begin{bmatrix}   x’\   y’  \end{bmatrix}"></a>$$<br>  \begin{bmatrix}<br>   x’\<br>   y’<br>  \end{bmatrix}</h1><p>  \begin{bmatrix}<br>   s &amp; 0\<br>   0 &amp; s<br>  \end{bmatrix}<br>  \begin{bmatrix}<br>   x\<br>   y<br>  \end{bmatrix}<br>$$<br>其中s是大小变化的系数，对角矩阵就是缩放矩阵。如果x、y两个方向上缩放的变化大小不相同，那么对角矩阵对应位置的系数也不相同。</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-09-56-00.png" class>
-<p>如果想要要完成上述的变换效果（shear）<br>我们就可以尝试对点的变化来找到线性变换的位置关系，例如原本的左上角点（0，1）变为了（a，1），由此我们可以知道，最上方的一条边上所有点的x方向移动距离都是a，继续向下可以知道每一个点的移动距离都是a*y。那么我们基于这样结论，可以得到以下式子：</p>
-<h1 id="begin-bmatrix-x’-y’-end-bmatrix-1"><a href="#begin-bmatrix-x’-y’-end-bmatrix-1" class="headerlink" title="$$ \begin{bmatrix}  x’\  y’ \end{bmatrix}"></a>$$<br> \begin{bmatrix}<br>  x’\<br>  y’<br> \end{bmatrix}</h1><p> \begin{bmatrix}<br>  1 &amp; a\<br>  0 &amp; 1<br> \end{bmatrix}<br> \begin{bmatrix}<br>  x\<br>  y<br> \end{bmatrix}<br>$$</p>
-<p>通过上述例子，我们只需要知道这种变换的前后的xy关系，即可写出这种变换。</p>
+<script type="math/tex; mode=display">
+  \begin{bmatrix}
+   x'\\
+   y'
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+   s & 0\\
+   0 & s
+  \end{bmatrix}
+  \begin{bmatrix}
+   x\\
+   y
+  \end{bmatrix}</script><p>其中s是大小变化的系数，对角矩阵就是缩放矩阵。如果x、y两个方向上缩放的变化大小不相同，那么对角矩阵对应位置的系数也不相同。</p>
+<p><img src="/images/2023-05-16-09-56-00.png" alt=""><br>如果想要要完成上述的变换效果（shear）<br>我们就可以尝试对点的变化来找到线性变换的位置关系，例如原本的左上角点（0，1）变为了（a，1），由此我们可以知道，最上方的一条边上所有点的x方向移动距离都是a，继续向下可以知道每一个点的移动距离都是a*y。那么我们基于这样结论，可以得到以下式子：</p>
+<script type="math/tex; mode=display">
+ \begin{bmatrix}
+  x'\\
+  y'
+ \end{bmatrix}
+ =
+ \begin{bmatrix}
+  1 & a\\
+  0 & 1
+ \end{bmatrix}
+ \begin{bmatrix}
+  x\\
+  y
+ \end{bmatrix}</script><p>通过上述例子，我们只需要知道这种变换的前后的xy关系，即可写出这种变换。</p>
 <p><strong>关于旋转变换</strong>（较难理解）</p>
-<p>不说旋转方向时我们一般按照逆时针方向为一般方向。</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-10-12-33.png" class>
-
-<p>旋转的矩阵我们可以这样设置：<br>$$<br>R_θ&#x3D;<br> \begin{bmatrix}<br> cosθ &amp; -sinθ\<br> sinθ &amp; cosθ<br> \end{bmatrix}<br>$$</p>
-<p>具体的推导过程可以参考如下图片：</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/%E4%BA%8C%E7%BB%B4%E6%97%8B%E8%BD%AC%E7%9F%A9%E9%98%B5%E6%8E%A8%E5%AF%BC.jpg" class>
-
-<p>从上述的集中变换中，我们发现可以将所有的变换变为一个矩阵*坐标的形式，我们认为这种变换为<strong>线性变换</strong>。</p>
-<p>关于位置的变换：</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-10-37-22.png" class>
-<p>可以表示为：<br>$$<br>x’&#x3D; x+t_x\<br>y’&#x3D; y +t_y<br>$$<br>上述式子我们可以直接表示为：</p>
-<h1 id="begin-bmatrix-x’-y’-end-bmatrix-2"><a href="#begin-bmatrix-x’-y’-end-bmatrix-2" class="headerlink" title="$$\begin{bmatrix} x’\ y’\end{bmatrix}"></a>$$<br>\begin{bmatrix}<br> x’\<br> y’<br>\end{bmatrix}</h1><p>\begin{bmatrix}<br> a &amp; b\<br> c &amp; d<br>\end{bmatrix}<br>\begin{bmatrix}<br> x\<br> y<br> \end{bmatrix}<br> +<br> \begin{bmatrix}<br> t_x\<br> t_y<br> \end{bmatrix}<br>$$</p>
-<p>我们会发现平移变换会加一个矩阵，不是线性变换，为了使得平移变换也能用线性变换的方式来表示，我们可以引入齐次坐标。</p>
+<p>不说旋转方向时我们一般按照逆时针方向为一般方向。<br><img src="/images/2023-05-16-10-12-33.png" alt=""></p>
+<p>旋转的矩阵我们可以这样设置：</p>
+<script type="math/tex; mode=display">
+R_θ=
+ \begin{bmatrix}
+ cosθ & -sinθ\\
+ sinθ & cosθ
+ \end{bmatrix}</script><p>具体的推导过程可以参考如下图片：<br><img src="/images/二维旋转矩阵推导.jpg" alt=""></p>
+<p>从上述的集中变换中，我们发现可以将所有的变换变为一个矩阵<em>坐标的形式，我们认为这种变换为<em>*线性变换</em></em>。</p>
+<p>关于位置的变换：<br><img src="/images/2023-05-16-10-37-22.png" alt=""><br>可以表示为：</p>
+<script type="math/tex; mode=display">
+x'= x+t_x\\
+y'= y +t_y</script><p>上述式子我们可以直接表示为：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+ x'\\
+ y'
+\end{bmatrix}
+=
+\begin{bmatrix}
+ a & b\\
+ c & d
+\end{bmatrix}
+\begin{bmatrix}
+ x\\
+ y
+ \end{bmatrix}
+ +
+ \begin{bmatrix}
+ t_x\\
+ t_y
+ \end{bmatrix}</script><p>我们会发现平移变换会加一个矩阵，不是线性变换，为了使得平移变换也能用线性变换的方式来表示，我们可以引入齐次坐标。</p>
 <p>基于二维变换，我们只需要增加一个点的纬度，例如：</p>
-<h1 id="begin-bmatrix-x’-y’-w’-end-bmatrix"><a href="#begin-bmatrix-x’-y’-w’-end-bmatrix" class="headerlink" title="$$\begin{bmatrix}x’\y’\w’\end{bmatrix}"></a>$$<br>\begin{bmatrix}<br>x’\<br>y’\<br>w’<br>\end{bmatrix}</h1><h1 id="begin-bmatrix-1-amp-0-amp-t-x-0-amp-1-amp-t-y-0-amp-0-amp-1-end-bmatrix-begin-bmatrix-x-y-1-end-bmatrix"><a href="#begin-bmatrix-1-amp-0-amp-t-x-0-amp-1-amp-t-y-0-amp-0-amp-1-end-bmatrix-begin-bmatrix-x-y-1-end-bmatrix" class="headerlink" title="\begin{bmatrix}1&amp;0&amp;t_x\0&amp;1&amp;t_y\0&amp;0&amp;1\end{bmatrix}\begin{bmatrix}x\y\1\end{bmatrix}"></a>\begin{bmatrix}<br>1&amp;0&amp;t_x\<br>0&amp;1&amp;t_y\<br>0&amp;0&amp;1<br>\end{bmatrix}<br>\begin{bmatrix}<br>x\<br>y\<br>1<br>\end{bmatrix}</h1><p>\begin{bmatrix}<br>x+t_x\<br>y+t_y\<br>1<br>\end{bmatrix}<br>$$<br><strong>w为1时是点，w为0时时向量</strong></p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+x'\\
+y'\\
+w'
+\end{bmatrix}
+=
+\begin{bmatrix}
+1&0&t_x\\
+0&1&t_y\\
+0&0&1
+\end{bmatrix}
+\begin{bmatrix}
+x\\
+y\\
+1
+\end{bmatrix}
+=
+\begin{bmatrix}
+x+t_x\\
+y+t_y\\
+1
+\end{bmatrix}</script><p><strong>w为1时是点，w为0时时向量</strong></p>
 <p>这里说明其次坐标下的各个几何意义，在齐次坐标下，如果为向量时，两个向量相加的结果为向量；两个点相减的i结果为这两个点组成的向量；一个点加一个向量结果为点随着这个向量运动的距离；点加点则代表两个点的中点。</p>
 <p>我们的目的是通过增加一个维度，来将使得我们的平移变换可以表示为线性变换。代价是我们需要更多的空间来存储额外的数字（这个代价很小）。</p>
 <p><strong>相关的其他变换</strong></p>
 <p>逆变换：</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-10-59-15.png" class>
-
+<p><img src="/images/2023-05-16-10-59-15.png" alt=""></p>
 <p>经过一个M的矩阵变换后再经过一个反过来的操作就会变回原样。</p>
 <p>混合变换：</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-11-04-54.png" class>
-
+<p><img src="/images/2023-05-16-11-04-54.png" alt=""></p>
 <p>上图的变换过程我们可以通过先旋转再平移来实现。<br>不能先平移再旋转的原因是我们的旋转矩阵的旋转中心是原点，如果先平移后旋转，那么旋转就是以平移后的中心点以原点为中心进行旋转，不能达到目的。具体效果可看下图：</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-11-06-50.png" class>
-
+<p><img src="/images/2023-05-16-11-06-50.png" alt=""></p>
 <p>其中需要注意的是矩阵没有交换律，但是有结合律。</p>
 <p>变换分解：</p>
-<img src="/.io//05/16/games101%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B01-3/2023-05-16-11-13-20.png" class>
-<p>想要完成上图效果，在该位置上按照左下角的点为原点进行旋转，我们的具体工作过程就可以设置为：</p>
+<p><img src="/images/2023-05-16-11-13-20.png" alt=""><br>想要完成上图效果，在该位置上按照左下角的点为原点进行旋转，我们的具体工作过程就可以设置为：</p>
 <p>先将左下角的点平移到原点进行一次平移变换，然后旋转，再平移回原来位置。</p>
 <p>这个过程就是将一个变换分解为3个步骤来进行。</p>
 <p>3D的变换基本上就是增加了一个维度变为3个维度，同时为了使用线性变换来表示，我们会齐次化，从而使用4个数来表示三维空间中的一个点或者向量。</p>
@@ -316,7 +368,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-16 11:27:29" itemprop="dateModified" datetime="2023-05-16T11:27:29+08:00">2023-05-16</time>
+                <time title="修改时间：2023-05-16 18:43:16" itemprop="dateModified" datetime="2023-05-16T18:43:16+08:00">2023-05-16</time>
               </span>
 
           
@@ -332,7 +384,7 @@
       
           <h1 id="PBD布料模拟算法"><a href="#PBD布料模拟算法" class="headerlink" title="PBD布料模拟算法"></a>PBD布料模拟算法</h1><p>基于位置的动力学（Position Based Dynamics）</p>
 <h2 id="基本原理："><a href="#基本原理：" class="headerlink" title="基本原理："></a>基本原理：</h2><p>首先解释一般基于力的模型动画模拟的过程：</p>
-<p>通过对某时刻物体进行受力分析，然后获得当前物体所受的合外力，然后基于牛顿第二定理F &#x3D; ma 来求取加速度，在通过微分的方法来获得当前物体的速度和方向，再通过细化的时间片来使物体的位置发生改变。在图形学中使用这样的方法来模拟运动会导致数据的不稳定，为了使得获得的数据稳定，需要花费更多的算力来进行计算。这不利于在快速输出结果的领域中应用（eg：VR、3d游戏等）。</p>
+<p>通过对某时刻物体进行受力分析，然后获得当前物体所受的合外力，然后基于牛顿第二定理F = ma 来求取加速度，在通过微分的方法来获得当前物体的速度和方向，再通过细化的时间片来使物体的位置发生改变。在图形学中使用这样的方法来模拟运动会导致数据的不稳定，为了使得获得的数据稳定，需要花费更多的算力来进行计算。这不利于在快速输出结果的领域中应用（eg：VR、3d游戏等）。</p>
 <p>而基于位置的动力学的模拟方法则可以较好的解决这个问题。</p>
 <p>其基本原理为：将所有的仿真对象都模拟成粒子，我们在对这些物体模拟时只考虑粒子，所有的物理学定律都被视为一种<strong>约束</strong>，用于约束粒子的运动。</p>
 <p><strong>约束</strong>一般分为两种：</p>
@@ -345,9 +397,7 @@
 <li>更具位置的差反过来求速度。</li>
 </ol>
 <p>对于布料来说，我们需要考虑的问题就是布料对象中，粒子的约束要如何来表达。这里使用gamse103课程中的布料模拟相关内容中的部分内容来说明。</p>
-<h2 id="布料模拟"><a href="#布料模拟" class="headerlink" title="布料模拟"></a>布料模拟</h2><p>上述第二点关于粒子运动方向内容的部分代码如下：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Strain_Limiting</span>()</span></span><br><span class="line">	&#123;</span><br><span class="line">		Mesh mesh = GetComponent&lt;MeshFilter&gt; ().mesh;</span><br><span class="line">		Vector3[] vertices = mesh.vertices;<span class="comment">//顶点位置信息</span></span><br><span class="line">		Vector3[] sum_x = <span class="keyword">new</span> Vector3[vertices.Length];<span class="comment">//顶点更新后的位置</span></span><br><span class="line">		<span class="built_in">int</span>[] sum_n = <span class="keyword">new</span> <span class="built_in">int</span>[vertices.Length];<span class="comment">//当前顶点连接的其他顶点的数量</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">//置0</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="built_in">int</span> i = <span class="number">0</span>; i&lt;sum_n.Length;i++)</span><br><span class="line">        &#123;</span><br><span class="line">			sum_n[i] = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; sum_x.Length; i++)</span><br><span class="line">		&#123;</span><br><span class="line">			sum_x[i] = <span class="keyword">new</span> Vector3(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// TODO 求出投影总位置</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> e = <span class="number">0</span>; e &lt; E.Length/<span class="number">2</span>; e++)</span><br><span class="line">        &#123;</span><br><span class="line">			<span class="built_in">int</span> i = E[e * <span class="number">2</span>];</span><br><span class="line">			<span class="built_in">int</span> j = E[e * <span class="number">2</span> + <span class="number">1</span>];</span><br><span class="line">			<span class="built_in">float</span> l = L[e];</span><br><span class="line"></span><br><span class="line">			sum_x[i] = sum_x[i] + <span class="number">0.5f</span> * (vertices[i] + vertices[j] + l * (vertices[i] - vertices[j]).normalized);</span><br><span class="line">			sum_x[j] = sum_x[j] + <span class="number">0.5f</span> * (vertices[i] + vertices[j] - l * (vertices[i] - vertices[j]).normalized);</span><br><span class="line">			sum_n[i]++;</span><br><span class="line">			sum_n[j]++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// TODO 根据总位置求出平均位置，赋值给顶点，并根据位移变化求出速度</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; vertices.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">			<span class="keyword">if</span> (i == <span class="number">0</span> || i == <span class="number">20</span>)</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			V[i] += inv_t * (((<span class="number">0.2f</span> * vertices[i] + sum_x[i]) / (<span class="number">0.2f</span> + sum_n[i])) - vertices[i]);<span class="comment">//按照实验要求计算</span></span><br><span class="line">			vertices[i] = (<span class="number">0.2f</span> * vertices[i] + sum_x[i]) / (<span class="number">0.2f</span> + sum_n[i]);<span class="comment">//按照实验要求计算</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		mesh.vertices = vertices;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-
+<h2 id="布料模拟"><a href="#布料模拟" class="headerlink" title="布料模拟"></a>布料模拟</h2><p>上述第二点关于粒子运动方向内容的部分代码如下：<br><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Strain_Limiting</span>()</span></span><br><span class="line">	&#123;</span><br><span class="line">		Mesh mesh = GetComponent&lt;MeshFilter&gt; ().mesh;</span><br><span class="line">		Vector3[] vertices = mesh.vertices;<span class="comment">//顶点位置信息</span></span><br><span class="line">		Vector3[] sum_x = <span class="keyword">new</span> Vector3[vertices.Length];<span class="comment">//顶点更新后的位置</span></span><br><span class="line">		<span class="built_in">int</span>[] sum_n = <span class="keyword">new</span> <span class="built_in">int</span>[vertices.Length];<span class="comment">//当前顶点连接的其他顶点的数量</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">//置0</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="built_in">int</span> i = <span class="number">0</span>; i&lt;sum_n.Length;i++)</span><br><span class="line">        &#123;</span><br><span class="line">			sum_n[i] = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; sum_x.Length; i++)</span><br><span class="line">		&#123;</span><br><span class="line">			sum_x[i] = <span class="keyword">new</span> Vector3(<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">// TODO 求出投影总位置</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> e = <span class="number">0</span>; e &lt; E.Length/<span class="number">2</span>; e++)</span><br><span class="line">        &#123;</span><br><span class="line">			<span class="built_in">int</span> i = E[e * <span class="number">2</span>];</span><br><span class="line">			<span class="built_in">int</span> j = E[e * <span class="number">2</span> + <span class="number">1</span>];</span><br><span class="line">			<span class="built_in">float</span> l = L[e];</span><br><span class="line"></span><br><span class="line">			sum_x[i] = sum_x[i] + <span class="number">0.5f</span> * (vertices[i] + vertices[j] + l * (vertices[i] - vertices[j]).normalized);</span><br><span class="line">			sum_x[j] = sum_x[j] + <span class="number">0.5f</span> * (vertices[i] + vertices[j] - l * (vertices[i] - vertices[j]).normalized);</span><br><span class="line">			sum_n[i]++;</span><br><span class="line">			sum_n[j]++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// TODO 根据总位置求出平均位置，赋值给顶点，并根据位移变化求出速度</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; vertices.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">			<span class="keyword">if</span> (i == <span class="number">0</span> || i == <span class="number">20</span>)</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			V[i] += inv_t * (((<span class="number">0.2f</span> * vertices[i] + sum_x[i]) / (<span class="number">0.2f</span> + sum_n[i])) - vertices[i]);<span class="comment">//按照实验要求计算</span></span><br><span class="line">			vertices[i] = (<span class="number">0.2f</span> * vertices[i] + sum_x[i]) / (<span class="number">0.2f</span> + sum_n[i]);<span class="comment">//按照实验要求计算</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		mesh.vertices = vertices;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
 <p>我们可以对上述代码进行分析：</p>
 <p>在求粒子位置的过程中，我们的输入内容为：模型的顶点位置信息。输出内容为更新后的顶点位置信息。在这个过程中，我们具体做的就是通过设置应变力来作为约束，对当前粒子的位置进行修正。具体思路为：通过两个用来存储顶点位置和顶点连接数的数组</p>
 <p>具体的工作过程为：</p>
@@ -532,6 +582,61 @@
 
 
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
