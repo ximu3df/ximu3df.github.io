@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="这一段时间完成了SPH物理水的实现，这里记录一下自己在本次实现过程中所面临的问题以及学习路径和相关内容。 Unity Compute Shader的学习 由于本次实现是基于unity来实现的，那么就要考虑在unity中的具体实现方式。由于SPH是通过周围粒子的信息来获取单个粒子的信息的，这个过程就需要大量的计算（因为为了保证视觉效果可能就需要使用大量的粒子来进行模拟，随之而来的就是大量的计算）。在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SPH再深入以及unityComputeShader学习">
+<meta property="og:url" content="http://ximu3df.github.io/2023/06/25/SPH%E5%86%8D%E6%B7%B1%E5%85%A5%E4%BB%A5%E5%8F%8AunityComputeShader%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="这一段时间完成了SPH物理水的实现，这里记录一下自己在本次实现过程中所面临的问题以及学习路径和相关内容。 Unity Compute Shader的学习 由于本次实现是基于unity来实现的，那么就要考虑在unity中的具体实现方式。由于SPH是通过周围粒子的信息来获取单个粒子的信息的，这个过程就需要大量的计算（因为为了保证视觉效果可能就需要使用大量的粒子来进行模拟，随之而来的就是大量的计算）。在">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-06-26-19-08-45.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-06-26-19-57-43.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-06-30-14-29-58.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-06-30-14-41-05.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-06-30-14-59-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/SPH%E6%95%88%E6%9E%9C.gif">
+<meta property="article:published_time" content="2023-06-25T12:30:21.000Z">
+<meta property="article:modified_time" content="2023-08-31T14:44:17.558Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="3d动画算法学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ximu3df.github.io/images/2023-06-26-19-08-45.png">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/06/25/SPH%E5%86%8D%E6%B7%B1%E5%85%A5%E4%BB%A5%E5%8F%8AunityComputeShader%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SPH再深入以及unityComputeShader学习 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/06/25/SPH%E5%86%8D%E6%B7%B1%E5%85%A5%E4%BB%A5%E5%8F%8AunityComputeShader%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SPH再深入以及unityComputeShader学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-25 20:30:21" itemprop="dateCreated datePublished" datetime="2023-06-25T20:30:21+08:00">2023-06-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-08-31 22:44:17" itemprop="dateModified" datetime="2023-08-31T22:44:17+08:00">2023-08-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这一段时间完成了SPH物理水的实现，这里记录一下自己在本次实现过程中所面临的问题以及学习路径和相关内容。</p>
+<h1 id="Unity-Compute-Shader的学习"><a href="#Unity-Compute-Shader的学习" class="headerlink" title="Unity Compute Shader的学习"></a>Unity Compute Shader的学习</h1><p> 由于本次实现是基于unity来实现的，那么就要考虑在unity中的具体实现方式。由于SPH是通过周围粒子的信息来获取单个粒子的信息的，这个过程就需要大量的计算（因为为了保证视觉效果可能就需要使用大量的粒子来进行模拟，随之而来的就是大量的计算）。在unity中，一般的C#脚本是通过cpu来进行计算的，所以面对大量的计算工作，可能会导致帧率较低。而在unity中，提供了一个名为comoute shader的着色器，该着色器可以调用gpu资源来进行计算，这让SPH物理水的粒子计算有了可能性。</p>
+<p>为此，我学习了unity中compute shader的相关知识以及使用。参考的文章如下：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/368307575">Compute Shader的基础介绍与使用</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/368307575">Unity基础-5,Compute Shaders</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/cn/current/Manual/UnityManual.html">unity官方文档</a></p>
+<p>这里总结一下自己所学到的内容：（学得比较浅）</p>
+<h2 id="什么是compute-shader？"><a href="#什么是compute-shader？" class="headerlink" title="什么是compute shader？"></a>什么是compute shader？</h2><p>unity中的计算着色器是和DirectX 11 DirectCompute紧密配合的。在我看来，unity通过其脚本将打包好的要处理的数据传入计算着色器中（这个过程其实就是将数据存储在gpu上），而计算着色器则通过DirectCompute来调用gpu从而完成相关的运算（使用的是HLSL）。</p>
+<p>那么gpu编程和一般的编程过程有什么具体的区别呢？</p>
+<p>我认为有以下几个不同点：</p>
+<ol>
+<li>由于gpu可以提供很多的线程，所以是并行编程，但是每一次计算量不宜过大，因为本身gpu提供的线程的处理能力都远不如cpu，但是其优点是可以同时进行大量的计算。如果使用cpu则会使得每一帧的运算时间过长，难以达到实时的效果。</li>
+<li>在代码编写的逻辑上也有一定的区别，以循环逻辑为例：cpu编程的过程中使用循环的方式是设置一个结束条件，然后逐步运行循环中的内容。但是compute shader在处理多次循环时一般会考虑使用等数量的线程来进行运算。例如我需要运行100次循环，gpu会使用100个线程使用一次计算时间来完成计算，而cpu则要进行100次计算。</li>
+<li>同时对多个数据处理，如果有迭代的要求，则可能会出现错误数据，所以原子操作在compute shader中是十分重要的。但是cpu中由于是顺序进行，所以迭代的实现没有那么多需要考虑的。</li>
+</ol>
+<p>还有很多其他不同点，但是了解了以上几个不同点之后我认为就已经足够实现本次的工作了。</p>
+<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><h3 id="compute-shader部分"><a href="#compute-shader部分" class="headerlink" title="compute shader部分"></a>compute shader部分</h3><p>unity中的compute shader使用的是HLSL语言，同时还需要考虑使用C#脚本对compute shader进行数据的设置和调用着色器。</p>
+<p>如果只是考虑使用compute shader进行数据的计算，那么只是用C#和compute shader就足够了，但是如果需要对网格进行渲染，还需要一般shader来进行辅助。</p>
+<p>具体来看一下如何使用：</p>
+<p>首先是compute shader部分，在unity中创建一个compute shader后就可以获得如下的一个模板：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> kernel CSMain</span></span><br><span class="line"></span><br><span class="line">RWTexture2D&lt;float4&gt; Result;</span><br><span class="line"></span><br><span class="line">[<span class="meta">numthreads(8,8,1)</span>]</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">CSMain</span> (<span class="params">uint3 id : SV_DispatchThreadID</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    Result[id.xy] = float4(id.x &amp; id.y, (id.x &amp; <span class="number">15</span>)/<span class="number">15.0</span>, (id.y &amp; <span class="number">15</span>)/<span class="number">15.0</span>, <span class="number">0.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以看一下各个部分的含义：</p>
+<p>首先是#pragma kernel CSMain，这个位置为一个可调用内部函数的声明，在外部想要使用compute shader中的函数，就需要先声明一个核函数。一个compute shader文件中至少要有一个核函数，否则无法工作。</p>
+<p>然后是RWTexture2D<float4> Result;这是一个可读写的2d纹理对象（前面的RW代表了可读写，意味着我们可以在C#脚本中通过相关的方法来对该缓存中的数据进行读写）。我们也可以定义其他的全局变量或者是缓存区来方便我们的数据处理。</float4></p>
+<p>最后是函数部分，在CSMain函数的上面有一段[numthreads(8,8,1)]，这个是我们的线程数量，这一部分可以参考微软的文档：<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/direct3dhlsl/sm5-attributes-numthreads">numthreads</a></p>
+<p>简单来说numthreads记录了一个线程组中的线程数量。三个参数意味着是以三维的方式来对线程进行编号记录的。但是其中也提供了很多的访问方式，例如上面代码中的参数部分：uint3 id : SV_DispatchThreadID，<strong>uint3</strong>我们都是知道是无符号整型的三维向量，而后面的宏又代表了什么呢？<strong>SV_DispatchThreadID</strong>实际上是我们获取线程编号的一种方式，其存储的数据是线程组的编号的xyz分别乘上整个一个线程组中的各个维度的线程总数的xyz再加上上述参数id的xyz。</p>
+<p>具体可参考下图：<br><img src="/images/2023-06-26-19-08-45.png" alt><br>    来微软自官方文档</p>
+<p>同样还提供了其他的宏让我们更好的进行相关遍历操作和线程选择。具体可以查看下图：<br><img src="/images/2023-06-26-19-57-43.png" alt></p>
+<p>通过这些方式，我们就可以选择需要的线程查询方式来对文件工作线程的工作进行设计了。</p>
+<p>CSMain中，我们就可以进行我们需要的工作了。</p>
+<h3 id="C-部分"><a href="#C-部分" class="headerlink" title="C#部分"></a>C#部分</h3><p>在C#中，我们需要做的主要是创建一个ComputeShader类的实例，然后通过该对象的相关操作，传入数据缓存，调用核函数，然后使用你经过计算着色器计算后的数据即可。</p>
+<p>大概可以分为以下几步：<br><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ComputeShader computeShader;<span class="comment">//计算着色器实例</span></span><br><span class="line"><span class="built_in">int</span> CSMain;</span><br><span class="line">CSmain = computeShader.FindKernel(<span class="string">&quot;CSMain&quot;</span>);</span><br><span class="line">computeShader.Dispatch(CSMain, <span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure></p>
+<p>上述过程为创建一个计算着色器实例，创建一个用于存储核函数句柄的整数，然后通过FindKernel函数获得对应核函数的句柄，最后通过Dispatch函数来对计算着色器中的方法进行调用。第一个参数为调用函数的句柄，后面三个为线程组的标号，使用的是一个三维向量来表示。具体可以参考前文中的<strong>numthreads</strong>的说明。简单来说，此处定义了有多少组线程组，而numthreads则是定义了一个线程组有多少个线程。例如上面代码中（包括计算着色器中的代码），总共有10*10*10*8*8*1个线程，其中10*10*10为线程组的数量，而8*8*8为一个线程组中的线程数量。这两个部分直接影响的是计算着色器中对应函数的参数可以获得的数据。（这里不能开辟太多的线程，毕竟GPU线程数量是有限的，具体数据可以查看英伟达官网）。</p>
+<p>通过上述步骤，就可以完成一次compute shader函数的调用了。但是这仅仅是调用了相关函数，我们要如何通过计算着色器获取我们需要的数据呢？</p>
+<p>这里就要使用我们的数据缓存了，unity中提供了ComputeBuffer类来完成cpu与gpu之间的数据交换。ComputeBuffer是一个用来存储一组数据的缓存，我们可以通过在cpu中定义需要存储的数据，然后放入buffer中，该数据就可以在gpu中使用。</p>
+<p>具体操作可参考如下代码：<br>例如我们要创建一个100个整形的缓存<br><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ComputeBuffer buffer;</span><br><span class="line"><span class="built_in">int</span>[] arr = <span class="keyword">new</span> <span class="built_in">int</span>[<span class="number">100</span>];</span><br><span class="line">buffer = <span class="keyword">new</span> ComputeBuffer(<span class="number">100</span>,<span class="keyword">sizeof</span>(<span class="built_in">int</span>));</span><br><span class="line">buffer.SetData(arr);</span><br><span class="line">computeShader.SetBuffer(CMain,<span class="string">&quot;_buffer&quot;</span>,buffer);</span><br></pre></td></tr></table></figure><br>这样我们就能够创建一个数据缓存了，而compute shader中，则只需要创建对应的用于存储的对对象即可：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RWStructuredBuffer&lt;<span class="built_in">int</span>&gt; _buffer;</span><br></pre></td></tr></table></figure>
+<p>同时需要注意，在需要使用到缓存的函数中使用SetBuffer。例如我们上述代码中，还有其他核函数使用了_buffer，那么只使用一次SetBuffer就会报错，需要取得对应句柄再次SetBuffer。</p>
+<p>如果要获得处理后的数据可以使用对应的buffer对象中所包含的函数GetData来将缓存中的数据读取到cpu中。</p>
+<p>以上便是简单的Compute Shader使用方法了，之后其他的具体使用会在具体实现的过程中来详细的说明。</p>
+<h1 id="SPH的再学习"><a href="#SPH的再学习" class="headerlink" title="SPH的再学习"></a>SPH的再学习</h1><p>之前有过一篇文章，是通过别人的文章学习并记录的，这里给出参考博客的原地址：<a target="_blank" rel="noopener" href="https://www.thecodeway.com/?p=83">https://www.thecodeway.com/?p=83</a></p>
+<p>但是在具体的实现过程中还是有很多SPH知识相关的问题出现。所以这里再次记录学习过程：</p>
+<h2 id="整体原理概述"><a href="#整体原理概述" class="headerlink" title="整体原理概述"></a>整体原理概述</h2><p>SPH方法其实是将液体描述为由许多微小的粒子组成的整体（微原法），对每一个粒子进行受力分析，从而获得粒子的速度加速度。其特点是使用非网格的方式，使得比较适合实现流体。</p>
+<p>粒子的运动过程中一般会受到以下几种力的影响重力（属于外力）、粘滞力、压力。SPH的求取过程其实就是在求每一个粒子受到的粘滞力、压力，然后通过f=ma来求取位置信息，最后逐帧更新，从而达到流体动画的播放效果。</p>
+<h2 id="主要工作"><a href="#主要工作" class="headerlink" title="主要工作"></a>主要工作</h2><p>在SPH中，我们的主要工作是计算粘滞力和压力（重力不变的情况下）。具体的计算公式的推导如下：</p>
+<p>水粒子在整体中主要受到外力和内部力两种类型的力影响。外力我们暂且不论，首先考虑内部力。在SPH的思想中，每一个粒子受到的内部力主要是受到周围粒子的影响。</p>
+<h2 id="实现公式的推导"><a href="#实现公式的推导" class="headerlink" title="实现公式的推导"></a>实现公式的推导</h2><p>可以查看上一篇文章，或者参考文章：<a target="_blank" rel="noopener" href="https://www.thecodeway.com/?p=83">https://www.thecodeway.com/?p=83</a></p>
+<h2 id="实现的思路"><a href="#实现的思路" class="headerlink" title="实现的思路"></a>实现的思路</h2><p>这一步将会着重说明具体的实现思路：</p>
+<p>首先要实现SPH，要考虑需要使用的数据。首先必须有的是每一个粒子的位置信息，其次计算每一个粒子的位置信息是基于速度与加速来进行计算的。那么最基本的三个数据就是粒子的位置（三个float），速度（三个float），加速度（三个float）。粒子的很多数据计算会使用到密度，所以这里需要一个密度数组来存储每一个粒子的密度（一个float）。</p>
+<p>同时由于考虑到计算中更好的遍历周围的粒子（不可能查找每一个粒子的时候把所有粒子都遍历一遍）所以我们就需要找到一个方法来方便遍历的。这里采用一个空间分割的方法，将空间分割为大小相等块，然后对每个块中的粒子进行记录，记录后对每个粒子进行访问的时候，就将自身所在空间格的周围的27个格子（立方体）中的粒子进行遍历，这样的话就可以减少查找周围粒子的时间。所以我们还需要一个哈希表。转换公式就是：哈希表索引 = 位置x值 + 位置y值*空间长 + 位置z值*空间总长的平方。这样的话我们就需要一个大小为空间格子总数的数组来存储数据（int类型）。同时还需要一个数组用于存储粒子的索引值，这个数组的大小等于空间格子数*每个格子可搜索数据数的最大值。每次查找的时候只需要通过哈希表索引+偏差值，就可以查找到一个空间格中存在的粒子的索引了。</p>
+<p>以下为一个2d例子：</p>
+<p><img src="/images/2023-06-30-14-29-58.png" alt></p>
+<p>空间分为了9个格子，例如当前遍历的是4号格子中的白色粒子，那么就需要对0-8号空间格进行遍历。其中存储的数据结构格式如下：<br><img src="/images/2023-06-30-14-41-05.png" alt></p>
+<p>给出了前三个空间的数据存储方式，具体为基于数组实现的哈希表，每个空间格能存储的粒子数量为5个。</p>
+<p>通过上述数组，然后进行相应遍历即可实现空间分割后的数据。</p>
+<h2 id="实现流程以及效果："><a href="#实现流程以及效果：" class="headerlink" title="实现流程以及效果："></a>实现流程以及效果：</h2><p>每一帧的工作流程如下：<br><img src="/images/2023-06-30-14-59-34.png" alt></p>
+<p>目前实现效果展示：<br><img src="/images/SPH效果.gif" alt></p>
+<p>以上为8000个粒子的模拟效果实现。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/3d%E5%8A%A8%E7%94%BB%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="tag"># 3d动画算法学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/05/21/SPH%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="prev" title="SPH法学习">
+      <i class="fa fa-chevron-left"></i> SPH法学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/29/games101%E5%89%8D%E6%9C%9F%E6%80%BB%E7%BB%93/" rel="next" title="games101前期总结">
+      games101前期总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Unity-Compute-Shader%E7%9A%84%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">Unity Compute Shader的学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFcompute-shader%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是compute shader？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">如何使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#compute-shader%E9%83%A8%E5%88%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">compute shader部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-%E9%83%A8%E5%88%86"><span class="nav-number">1.2.2.</span> <span class="nav-text">C#部分</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SPH%E7%9A%84%E5%86%8D%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.</span> <span class="nav-text">SPH的再学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E5%8E%9F%E7%90%86%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.</span> <span class="nav-text">整体原理概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.2.</span> <span class="nav-text">主要工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%85%AC%E5%BC%8F%E7%9A%84%E6%8E%A8%E5%AF%BC"><span class="nav-number">2.3.</span> <span class="nav-text">实现公式的推导</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%80%9D%E8%B7%AF"><span class="nav-number">2.4.</span> <span class="nav-text">实现的思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%95%88%E6%9E%9C%EF%BC%9A"><span class="nav-number">2.5.</span> <span class="nav-text">实现流程以及效果：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第十六课回顾  渲染方程：观测到的光 &#x3D; 物体自发光 + 各个方向来的光线的积分（包括光源和其他物体的反射）。 蒙特卡洛积分：黎曼积分：求长方形宽趋于0的极限来求不定积分。 蒙特卡洛积分的原理：在定积分的范围中进行采样，采样内容为不定积分的被积函数值，用该值作为高，以b-a为宽计算长方形的面积。多次采样后，获得多个结果在计算其平均获得不定积分的解。 使用蒙特卡洛积分的过程： 不定积分：  概率密度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="games101笔记16-18">
+<meta property="og:url" content="http://ximu3df.github.io/2023/09/08/games101%E7%AC%94%E8%AE%B016-18/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="第十六课回顾  渲染方程：观测到的光 &#x3D; 物体自发光 + 各个方向来的光线的积分（包括光源和其他物体的反射）。 蒙特卡洛积分：黎曼积分：求长方形宽趋于0的极限来求不定积分。 蒙特卡洛积分的原理：在定积分的范围中进行采样，采样内容为不定积分的被积函数值，用该值作为高，以b-a为宽计算长方形的面积。多次采样后，获得多个结果在计算其平均获得不定积分的解。 使用蒙特卡洛积分的过程： 不定积分：  概率密度">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-09-43-48.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-09-44-02.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-09-51-58.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-09-52-59.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-01-39.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-21-52.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-29-17.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-31-40.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-34-15.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-34-50.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-36-16.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-44-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-46-10.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-10-53-29.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-01-43.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-16-15.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-17-09.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-21-40.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-27-52.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-32-04.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-33-38.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-08-11-41-40.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-09-35-12.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-09-35-32.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-09-43-49.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-09-51-59.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-09-54-46.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-03-50.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-12-03.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-15-28.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-17-13.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-20-36.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-40-10.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-40-56.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-49-14.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-10-50-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-04-27.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-17-35.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-22-31.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-22-55.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-23-40.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-27-21.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-31-29.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-32-52.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-09-11-37-01.png">
+<meta property="article:published_time" content="2023-09-08T01:20:24.000Z">
+<meta property="article:modified_time" content="2023-09-13T07:01:07.745Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="games101笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ximu3df.github.io/images/2023-09-08-09-43-48.png">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/09/08/games101%E7%AC%94%E8%AE%B016-18/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>games101笔记16-18 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/09/08/games101%E7%AC%94%E8%AE%B016-18/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          games101笔记16-18
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-08 09:20:24" itemprop="dateCreated datePublished" datetime="2023-09-08T09:20:24+08:00">2023-09-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-13 15:01:07" itemprop="dateModified" datetime="2023-09-13T15:01:07+08:00">2023-09-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第十六课"><a href="#第十六课" class="headerlink" title="第十六课"></a>第十六课</h1><p>回顾  渲染方程：观测到的光 = 物体自发光 + 各个方向来的光线的积分（包括光源和其他物体的反射）。</p>
+<h2 id="蒙特卡洛积分："><a href="#蒙特卡洛积分：" class="headerlink" title="蒙特卡洛积分："></a>蒙特卡洛积分：</h2><p>黎曼积分：求长方形宽趋于0的极限来求不定积分。</p>
+<p>蒙特卡洛积分的原理：在定积分的范围中进行采样，采样内容为不定积分的被积函数值，用该值作为高，以b-a为宽计算长方形的面积。多次采样后，获得多个结果在计算其平均获得不定积分的解。</p>
+<p>使用蒙特卡洛积分的过程：</p>
+<p>不定积分：</p>
+<p><img src="/images/2023-09-08-09-43-48.png" alt></p>
+<p>概率密度函数：</p>
+<p><img src="/images/2023-09-08-09-44-02.png" alt></p>
+<p>计算过程：<br>假设我们的采样是等可能的采样</p>
+<p><img src="/images/2023-09-08-09-51-58.png" alt></p>
+<p>我们通过均匀采样的方式采集N次。f(Xi)为高度，b-a为宽度。再求平均，就可以获得我们的对于积分结果的一个估计。</p>
+<p>也就是说，我们的计算结果如下：</p>
+<p><img src="/images/2023-09-08-09-52-59.png" alt></p>
+<p>但是当我们的随机变量的采样不是平均采样的方法呢？我们可以直接使用PDF的值来进行计算：</p>
+<p><img src="/images/2023-09-08-10-01-39.png" alt></p>
+<p>同时根据上述式子，N值取得越大，越准确。同时其积分域已经在p(Xi)中表示了，比较方便。</p>
+<h2 id="路径追踪"><a href="#路径追踪" class="headerlink" title="路径追踪"></a>路径追踪</h2><p>使用辐射度量学的思路来进行光线追踪，我们需要解渲染方程：</p>
+<p><img src="/images/2023-09-08-10-21-52.png" alt></p>
+<p>我们解决积分部分使用的就是蒙特卡洛方程。我们首先考虑一个点的直接光照：</p>
+<p><img src="/images/2023-09-08-10-29-17.png" alt></p>
+<p>我们的光源（light）是一个面光源，半球是各个光线的射入方向。</p>
+<p>抛去自发光部分：</p>
+<p><img src="/images/2023-09-08-10-31-40.png" alt></p>
+<p>我们可以使用蒙特卡洛积分的方法，首先从各个方向进行采样（ωi）,所以pdf是对各个射入方向的采样，以下给出一个常用的采样方法：</p>
+<p><img src="/images/2023-09-08-10-34-15.png" alt></p>
+<p>而我们的积分是上述积分的被积函数部分：</p>
+<p><img src="/images/2023-09-08-10-34-50.png" alt></p>
+<p>经过变换，我们的积分结果可以近似的得到：</p>
+<p><img src="/images/2023-09-08-10-36-16.png" alt></p>
+<p>带入对应的数据即可解出结果。但是我们的计算不止是直接光照，还包括间接光照。</p>
+<p><img src="/images/2023-09-08-10-44-34.png" alt></p>
+<p>例如我们要在P点求取Q点的反射光，我们的思路就是将P点设为一个视点，然后求取Q的发出的直接光照。我们可以通过递归的方式来实现，伪代码：</p>
+<p><img src="/images/2023-09-08-10-46-10.png" alt></p>
+<p>递归的终止条件是查找的对象受到的光只有光源直射光。</p>
+<p>但是这样不能解决问题，原因有两个：</p>
+<ol>
+<li>光线数量过多，反射次数越多，计算光线越多。只有在我们做蒙特卡洛积分中的N为1时，才不会出现爆炸的现象（这就是路径追逐），如果N不为1，则是分布式光线追踪。<br>路径追踪：</li>
+</ol>
+<p><img src="/images/2023-09-08-10-53-29.png" alt></p>
+<p>对于每一个像素，我们要获得一个光线的值，可以均匀的取N个不同的位置，然后从视点发射出N条光线，然后这个光线会碰到物体或者是光源，如果时光源直接计算其结果，如果时物体，则开始计算其反射（追踪路径，其中蒙特卡洛积分只选取一个方向的射线）。然后求平均，这样就不会出现上述的光线数量爆炸的问题了。伪代码：</p>
+<p><img src="/images/2023-09-08-11-01-43.png" alt></p>
+<ol>
+<li>使用上述方法，shade函数是递归的，这个算法可能永远不会停止，如果我们给他进行反射次数的限制，但是真实情况下光线本身就会弹射无数次，如过直接停止，可能会造成能量的损失。解决方法是使用RR的思想（俄罗斯轮盘赌，Russian Roulett）。我们用这个方法来设置一个概率，让光线停止追踪。假设我们积分的结果是Lo，然后我们定义一个概率P，我们以这个概率发射射线，以1-P的概率不发射射线。然后我们将结果Lo除以P。</li>
+</ol>
+<p><img src="/images/2023-09-08-11-16-15.png" alt></p>
+<p>这个过程是一个计算期望的过程（结果是正确结果的近似，会有噪声产生）。</p>
+<p>具体代码：</p>
+<p><img src="/images/2023-09-08-11-17-09.png" alt></p>
+<p>多出的部分就是使用随机数来进行判定是否需要发射射线。以及除以概率来求取期望的过程。</p>
+<h2 id="路径追踪的优化"><a href="#路径追踪的优化" class="headerlink" title="路径追踪的优化"></a>路径追踪的优化</h2><p>需要高效的计算可能获得的结果噪声过多，需要好的效果开销较大。原因是如果光源较小，我们随机选取的光线可能不会打到光源，这样我们只能随机选取更多的光线。</p>
+<p><img src="/images/2023-09-08-11-21-40.png" alt></p>
+<p>所以，我们要跟换一下PDF，选择更好的采样方法。具体来说就是我们直接在光源上进行采样。</p>
+<p>实现原理：</p>
+<p>我们将光源当作一个二维的面，我们只需要针对光源方向进行取样，但是光源上是一个面积，蒙特卡洛积分则是使用立体角来进行采样，我们需要考虑一种办法能够让我们继续使用到蒙特卡洛积分。</p>
+<p><img src="/images/2023-09-08-11-27-52.png" alt></p>
+<p>我们可以通过将光源的面投影到半球体上，这样我们就可以通过投影的面积来进行立体角的计算了（妙）。也就是说，我们将立体角拆分成了映射面积*cos/半径平方（参考前文的立体角定义）。</p>
+<p><img src="/images/2023-09-08-11-32-04.png" alt></p>
+<p>更改后重写的渲染方程为：</p>
+<p><img src="/images/2023-09-08-11-33-38.png" alt></p>
+<p>dA就是对光源面积的积分（微积分简单的变量替换）。</p>
+<p>于是我们的shade算法就可以进行更改和优化了，对于直接光照，我们采用对光源面积积分的方式采样计算，对于反射物体，我们还是使用立体角的方式进行采样计算。</p>
+<p><img src="/images/2023-09-08-11-41-40.png" alt></p>
+<p>最后还有一个小问题：我们对直接光源进行采样，可能会出现一些问题。因为我们采样光源时没有考虑是否有物体遮挡，其实这个过程我们只需要做一个向量的判定即可。</p>
+<p>对于路径追踪，点光源的处理非常麻烦，建议做成很小的有面积的光源。</p>
+<h1 id="第十八课"><a href="#第十八课" class="headerlink" title="第十八课"></a>第十八课</h1><h2 id="材质与外观"><a href="#材质与外观" class="headerlink" title="材质与外观"></a>材质与外观</h2><p>在渲染方程中BRDF是和材质直接绑定的。表面材质的本质是其反射光的方式。也就是说材质==BRDF。</p>
+<h3 id="漫反射"><a href="#漫反射" class="headerlink" title="漫反射"></a>漫反射</h3><p>eg：</p>
+<p><img src="/images/2023-09-09-09-35-12.png" alt></p>
+<p>上图为漫反射材质。</p>
+<p><img src="/images/2023-09-09-09-35-32.png" alt></p>
+<p>如果点不发光，也不吸收光，那么能量进来多少，就会被反射多少，不会有损失的能量。</p>
+<p><img src="/images/2023-09-09-09-43-49.png" alt></p>
+<p>上述公式描述的是漫反射系数的定义过程，具体来说就是：</p>
+<p>fr作为BRDF是常数Li也是常数，由于我们反射是对所有半球上的方向进行积分，所以积分结果就是PI。如果我们要获得遵循能量守恒，Lo==Li，所以fr=1/PI。然后我们定义一个系数反射率（albedo，可以是一个数，可以是一个rgp，也可以是光谱）。</p>
+<h3 id="glossy反射"><a href="#glossy反射" class="headerlink" title="glossy反射"></a>glossy反射</h3><p>有反射，同时会往一个范围内反射。</p>
+<p><img src="/images/2023-09-09-09-51-59.png" alt></p>
+<h3 id="镜面反射"><a href="#镜面反射" class="headerlink" title="镜面反射"></a>镜面反射</h3><p>有反射有折射。</p>
+<p><img src="/images/2023-09-09-09-54-46.png" alt></p>
+<p>反射公式为：</p>
+<p><img src="/images/2023-09-09-10-03-50.png" alt></p>
+<p>该公式有两个理解方式：</p>
+<ol>
+<li>使用第一个图的思路来理解，作平行四边形，由此列出等式：反射光加入射光等于2 <em> cos与法线夹角 </em> 法线。由此计算出反射光。</li>
+<li>第二个图的思路是使用方位角的思路来进行求解的。</li>
+</ol>
+<p>下图为镜面反射的BRDF效果：</p>
+<p><img src="/images/2023-09-09-10-12-03.png" alt></p>
+<p>在镜面反射中，折射现象的计算方式：</p>
+<p><img src="/images/2023-09-09-10-15-28.png" alt></p>
+<p>入射角和折射角分别与其折射率相乘，结果相等。如果有了折射率，我们就可以计算出折射角。以下有一些物体常见的折射率：</p>
+<p><img src="/images/2023-09-09-10-17-13.png" alt></p>
+<p>折射法则：</p>
+<p><img src="/images/2023-09-09-10-20-36.png" alt></p>
+<p>要使ηi&gt;ηt时才会出现折射现象。否则根号下结果小于0，不能计算。否则就会出现全反射现象。</p>
+<p><strong>菲涅尔项</strong>：用于表述有多少能量被反射和折射。</p>
+<p>计算方式：</p>
+<p><img src="/images/2023-09-09-10-40-10.png" alt></p>
+<p>计算两个极化的情况然后求平均（麻烦）</p>
+<p>简化方法：</p>
+<p><img src="/images/2023-09-09-10-40-56.png" alt></p>
+<p>这种方法是一个拟合的方法。</p>
+<h3 id="微表面模型"><a href="#微表面模型" class="headerlink" title="微表面模型"></a>微表面模型</h3><p>在较远的位置观察，我们可能看到的结果是一个粗糙平面，而近处看则是凹凸不，且每个微元都是镜面反射。</p>
+<p>虽然每个微元的反射方向不同，但是其宏观来观察是趋近于一个方向的（表面不够粗糙的话）。如果表面过于粗糙，那么其分布范围就会变大，会形成一个类似于漫反射的效果。</p>
+<p><img src="/images/2023-09-09-10-49-14.png" alt></p>
+<p>具体的做法是：</p>
+<p><img src="/images/2023-09-09-10-50-34.png" alt></p>
+<p>其BRDF主要和三个数据相关，第一个是菲涅尔项（主要是判断反射率），第二个是几何项（主要是微表面自己表面间的遮挡关系），第三个是法线分布函数。</p>
+<p>渲染案例：</p>
+<p><img src="/images/2023-09-09-11-04-27.png" alt></p>
+<p>该类模型常用于PBR。</p>
+<p>其常常出现的问题是散射光较少，可能需要对此进行额外处理。</p>
+<h3 id="各向异性的材质"><a href="#各向异性的材质" class="headerlink" title="各向异性的材质"></a>各向异性的材质</h3><p>各项同性：模型微表面不存在一定的方向性。</p>
+<p>各项异性：微表面的法线分布具有一定的方向性。</p>
+<p>各向异性的渲染效果：</p>
+<p><img src="/images/2023-09-09-11-17-35.png" alt></p>
+<p>还可以表现织物和天鹅绒这样的效果。</p>
+<h3 id="BRDF的性质"><a href="#BRDF的性质" class="headerlink" title="BRDF的性质"></a>BRDF的性质</h3><p><strong>线性性质：</strong></p>
+<p><img src="/images/2023-09-09-11-22-31.png" alt></p>
+<p><strong>可逆性：</strong></p>
+<p><img src="/images/2023-09-09-11-22-55.png" alt></p>
+<p>交换入射方向和出射方向结果相同</p>
+<p><strong>能量守恒：</strong></p>
+<p><img src="/images/2023-09-09-11-23-40.png" alt></p>
+<p>不会凭空产生能量，也不会凭空减少（吸收不是凭空减少）。</p>
+<p><strong>各向同性和各向异性：</strong><br>各向同性意味着BRDF只和相对的方位角有关（可以降低一维），同时具有可逆性。</p>
+<p><img src="/images/2023-09-09-11-27-21.png" alt></p>
+<h3 id="真正的BRDF"><a href="#真正的BRDF" class="headerlink" title="真正的BRDF"></a>真正的BRDF</h3><p>需要实际测量：</p>
+<p><img src="/images/2023-09-09-11-31-29.png" alt></p>
+<p><img src="/images/2023-09-09-11-32-52.png" alt></p>
+<p>在一个方向照射光，然后使用一个摄像机进行数据收集。也有一种思路是使用深度学习的方式来进行求取。介绍的库：</p>
+<p><img src="/images/2023-09-09-11-37-01.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/games101%E7%AC%94%E8%AE%B0/" rel="tag"># games101笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/03/games101%E7%AC%94%E8%AE%B013-15/" rel="prev" title="games101笔记13-15">
+      <i class="fa fa-chevron-left"></i> games101笔记13-15
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/13/games101%E7%AC%94%E8%AE%B019-21/" rel="next" title="games101笔记19-21">
+      games101笔记19-21 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E5%85%AD%E8%AF%BE"><span class="nav-number">1.</span> <span class="nav-text">第十六课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E7%A7%AF%E5%88%86%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">蒙特卡洛积分：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.2.</span> <span class="nav-text">路径追踪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E8%BF%BD%E8%B8%AA%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">路径追踪的优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E5%85%AB%E8%AF%BE"><span class="nav-number">2.</span> <span class="nav-text">第十八课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%90%E8%B4%A8%E4%B8%8E%E5%A4%96%E8%A7%82"><span class="nav-number">2.1.</span> <span class="nav-text">材质与外观</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%AB%E5%8F%8D%E5%B0%84"><span class="nav-number">2.1.1.</span> <span class="nav-text">漫反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#glossy%E5%8F%8D%E5%B0%84"><span class="nav-number">2.1.2.</span> <span class="nav-text">glossy反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%9C%E9%9D%A2%E5%8F%8D%E5%B0%84"><span class="nav-number">2.1.3.</span> <span class="nav-text">镜面反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E8%A1%A8%E9%9D%A2%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.1.4.</span> <span class="nav-text">微表面模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%84%E5%90%91%E5%BC%82%E6%80%A7%E7%9A%84%E6%9D%90%E8%B4%A8"><span class="nav-number">2.1.5.</span> <span class="nav-text">各向异性的材质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BRDF%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="nav-number">2.1.6.</span> <span class="nav-text">BRDF的性质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84BRDF"><span class="nav-number">2.1.7.</span> <span class="nav-text">真正的BRDF</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

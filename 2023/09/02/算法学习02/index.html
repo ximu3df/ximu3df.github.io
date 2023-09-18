@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="旧题复习有序数组的平方leetcode链接：https:&#x2F;&#x2F;leetcode.cn&#x2F;problems&#x2F;squares-of-a-sorted-array&#x2F;这个题目的解法有很多，解法有两种，一种是全平方后进行排序，第二种是使用更多的空间将每一个数字平方后的结果使用双指针进行遍历并插入，然后返回新数组。可以使用双指针的原理是因为原本就是有序排列的，头部的数据的平方可能会大于尾部数据的平方（因为可能为负">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法学习02">
+<meta property="og:url" content="http://ximu3df.github.io/2023/09/02/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A002/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="旧题复习有序数组的平方leetcode链接：https:&#x2F;&#x2F;leetcode.cn&#x2F;problems&#x2F;squares-of-a-sorted-array&#x2F;这个题目的解法有很多，解法有两种，一种是全平方后进行排序，第二种是使用更多的空间将每一个数字平方后的结果使用双指针进行遍历并插入，然后返回新数组。可以使用双指针的原理是因为原本就是有序排列的，头部的数据的平方可能会大于尾部数据的平方（因为可能为负">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-02T07:50:17.000Z">
+<meta property="article:modified_time" content="2023-09-05T05:26:08.946Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="算法学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/09/02/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A002/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>算法学习02 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/09/02/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A002/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法学习02
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-02 15:50:17" itemprop="dateCreated datePublished" datetime="2023-09-02T15:50:17+08:00">2023-09-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-05 13:26:08" itemprop="dateModified" datetime="2023-09-05T13:26:08+08:00">2023-09-05</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="旧题复习"><a href="#旧题复习" class="headerlink" title="旧题复习"></a>旧题复习</h1><h2 id="有序数组的平方"><a href="#有序数组的平方" class="headerlink" title="有序数组的平方"></a>有序数组的平方</h2><p>leetcode链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/squares-of-a-sorted-array/">https://leetcode.cn/problems/squares-of-a-sorted-array/</a><br>这个题目的解法有很多，解法有两种，一种是全平方后进行排序，第二种是使用更多的空间将每一个数字平方后的结果使用双指针进行遍历并插入，然后返回新数组。可以使用双指针的原理是因为原本就是有序排列的，头部的数据的平方可能会大于尾部数据的平方（因为可能为负数）。<br>这里给出第二种解法的代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">sortedSquares</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(nums.<span class="built_in">size</span>()==<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> nums;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> min = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> max = nums.<span class="built_in">size</span>()<span class="number">-1</span>;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; res;</span><br><span class="line">    <span class="keyword">while</span>(min&lt;=max)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">abs</span>(nums[min])&lt;<span class="built_in">abs</span>(nums[max]))</span><br><span class="line">        &#123;</span><br><span class="line">            res.<span class="built_in">insert</span>(res.<span class="built_in">begin</span>(),nums[max]*nums[max]);</span><br><span class="line">            max--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            res.<span class="built_in">insert</span>(res.<span class="built_in">begin</span>(),nums[min]*nums[min]);</span><br><span class="line">            min++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="leetcode每日一题"><a href="#leetcode每日一题" class="headerlink" title="leetcode每日一题"></a>leetcode每日一题</h1><h2 id="最多可以摧毁的敌人城堡数目"><a href="#最多可以摧毁的敌人城堡数目" class="headerlink" title="最多可以摧毁的敌人城堡数目"></a>最多可以摧毁的敌人城堡数目</h2><p>原题链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/maximum-enemy-forts-that-can-be-captured/?envType=daily-question&amp;envId=2023-09-02">https://leetcode.cn/problems/maximum-enemy-forts-that-can-be-captured/?envType=daily-question&amp;envId=2023-09-02</a></p>
+<p>题目要求为求取最多能够摧毁的城堡数量。这里我的思路是使用快慢双指针的方法该，使用快慢指针来遍历数组，如果遇到可以出发的地方（无论是空地还是自己的城堡，因为方向是无所谓的），就开始移动快指针，如果快指针遇到敌人城堡则增加计数器，否则判断是否和出发点的类型相同，如果不同的话，则表示这个流程是合理的，我们判断计数器是否为最大值，否则该流程作废。完成之后将慢指针跳跃到快指针位置，继续遍历。</p>
+<p>解题代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">captureForts</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; forts)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">       <span class="type">int</span> slow = <span class="number">0</span>;</span><br><span class="line">       <span class="type">int</span> fast = <span class="number">0</span>;</span><br><span class="line">       <span class="type">int</span> res = <span class="number">0</span>;</span><br><span class="line">       <span class="keyword">while</span>(fast&lt;forts.<span class="built_in">size</span>())</span><br><span class="line">       &#123;</span><br><span class="line">           <span class="keyword">if</span>((forts[slow]==<span class="number">1</span>||forts[slow]==<span class="number">-1</span>)&amp;&amp;fast==slow)<span class="comment">//找到入口的情况</span></span><br><span class="line">           &#123;</span><br><span class="line">               <span class="type">int</span> sum = <span class="number">0</span>;<span class="comment">//计数器</span></span><br><span class="line">               <span class="keyword">while</span>(<span class="number">1</span>)<span class="comment">//快指针的遍历</span></span><br><span class="line">               &#123;</span><br><span class="line">                   fast++;</span><br><span class="line">                   <span class="keyword">if</span>(fast&gt;=forts.<span class="built_in">size</span>())<span class="comment">//快指针超出</span></span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                   <span class="keyword">if</span>(forts[fast]!=<span class="number">0</span>)<span class="comment">//找到非敌人堡垒</span></span><br><span class="line">                   &#123;</span><br><span class="line">                       <span class="keyword">if</span>(forts[fast]==forts[slow])<span class="comment">//判断流程是否可用</span></span><br><span class="line">                       &#123;</span><br><span class="line">                           <span class="keyword">break</span>;</span><br><span class="line">                       &#125;</span><br><span class="line">                       <span class="keyword">else</span></span><br><span class="line">                       &#123;</span><br><span class="line">                           <span class="keyword">if</span>(sum&gt;=res)<span class="comment">//可用时更新最大摧毁数</span></span><br><span class="line">                               res = sum;</span><br><span class="line">                           <span class="keyword">break</span>;</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">                   sum++;<span class="comment">//摧毁敌人城堡计数器</span></span><br><span class="line">               &#125;</span><br><span class="line">               slow = fast;<span class="comment">//慢指针跳转</span></span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">else</span><span class="comment">//初始为0的情况</span></span><br><span class="line">           &#123;</span><br><span class="line">               slow++;</span><br><span class="line">               fast++;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; </span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="消灭怪物的最大数量"><a href="#消灭怪物的最大数量" class="headerlink" title="消灭怪物的最大数量"></a>消灭怪物的最大数量</h2><p>leetcode原题链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/eliminate-maximum-number-of-monsters/description/">https://leetcode.cn/problems/eliminate-maximum-number-of-monsters/description/</a></p>
+<p>解题思路：该题可以使用贪心的思路来解决。首先分析题目：所有怪物是会移动的，其次我们每一分钟才能发射一次。出现不能防守的情况就是怪物到达，我们却无法射击，所以我们需要注意的核心数据是时间。我们可以使用一个数组来计算每一个怪物到达城市所需要花费的时间。我们只需要抓紧时间击杀掉时间最短的怪物即可，获取了怪物到达时间之后，我们进行一下排序，然后遍历该数组即可（遍历的过程就代表了每分钟攻击一次，将最前方的怪物击杀）。如果出现了索引值大于当前时间的情况，说明我们没有时间开枪将怪物击败，怪物已经到达了城市，这是返回我们花费的时间即可。</p>
+<p>以下为解题代码：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">eliminateMaximum</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; dist, vector&lt;<span class="type">int</span>&gt;&amp; speed)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        vector&lt;<span class="type">float</span>&gt; times;<span class="comment">//使用float类型来进行时间存储</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;dist.<span class="built_in">size</span>();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            times.<span class="built_in">push_back</span>((<span class="type">float</span>)dist[i]/speed[i]);<span class="comment">//存入时间</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">sort</span>(times.<span class="built_in">begin</span>(),times.<span class="built_in">end</span>());<span class="comment">//排序</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;times.<span class="built_in">size</span>();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//如果出现了怪物的到达时间快于我们攻击的cd时间（等于的情况是怪物正好到达，但是我们cd也刚好，这样也判为输）</span></span><br><span class="line">            <span class="keyword">if</span>(times[i]&lt;=i)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(i==<span class="number">0</span>)<span class="comment">//这里判断是+1是因为第一只怪物如果移动速度很快，我们也可以很快的将其消灭（开始时无cd）</span></span><br><span class="line">                    <span class="keyword">return</span> i+<span class="number">1</span>;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dist.<span class="built_in">size</span>();<span class="comment">//全部消灭</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><h2 id="最后一块石头的重量-II"><a href="#最后一块石头的重量-II" class="headerlink" title="最后一块石头的重量 II"></a>最后一块石头的重量 II</h2><p>leetcode链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/last-stone-weight-ii/description/">https://leetcode.cn/problems/last-stone-weight-ii/description/</a></p>
+<p>解决思路：<br>根据题目要求，我们需要每一次选出两块石头，然后进行粉碎，如果石头重量相同，两块石头消失，否则生成一块重的石头减去轻的石头的重量的石头。题目中所做的工作我们放在整体上去看，实际上就是将石头分为两个部分，两个部分的重量要尽可能的相同，求两部分石头相减后的最小值。</p>
+<p>要获得这个最小值就要使得两部分石头的重量尽可能的大。这样想，这个题目其实和分割等和子集的思路是较为接近的。我们可以求出总重量，然后使用01背包的思想来记录重量。最优解其实就是总重量的一半处。</p>
+<p>根据上述分析，我们可以来进行dp数组的设计，这里采用滚动数组，dp数组的下标代表了石头的总重量，计算总重量后再开辟数组空间，具体代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;stones.<span class="built_in">size</span>();i++)</span><br><span class="line">&#123;</span><br><span class="line">    sum += stones[i];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dp</span><span class="params">(sum+<span class="number">1</span>,<span class="number">0</span>)</span></span>;</span><br><span class="line"><span class="type">int</span> n = sum;</span><br><span class="line">sum/=<span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<p>由此我们获得了dp数组。之后我们通过递推公式将石头放入递推数组中。其意义为在这个载重下，能放入的最大石头重量。具体代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;stones.<span class="built_in">size</span>();i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = n;j&gt;=stones[i];j--)</span><br><span class="line">    &#123;</span><br><span class="line">        dp[j] = <span class="built_in">max</span>(dp[j],dp[j-stones[i]]+stones[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体递推过程可以参考算法学习01（如果你想不起来了记得去看）。</p>
+<p>由此，我们所期望的最优值是dp数组为中值时能放入的最大重量的石头，我们只需要返回两部分的差值即可。一部分为n-dp[sum],这是没有放入背包的石头重量，另一部分为dp[sum]，这是最优条件下能够放入背包的重量。两者相减获得我们的结果。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="tag"># 算法学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/31/games101%E7%AC%94%E8%AE%B010-12/" rel="prev" title="games101笔记10-12">
+      <i class="fa fa-chevron-left"></i> games101笔记10-12
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/03/games101%E7%AC%94%E8%AE%B013-15/" rel="next" title="games101笔记13-15">
+      games101笔记13-15 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A7%E9%A2%98%E5%A4%8D%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">旧题复习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E5%B9%B3%E6%96%B9"><span class="nav-number">1.1.</span> <span class="nav-text">有序数组的平方</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#leetcode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">leetcode每日一题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%A4%9A%E5%8F%AF%E4%BB%A5%E6%91%A7%E6%AF%81%E7%9A%84%E6%95%8C%E4%BA%BA%E5%9F%8E%E5%A0%A1%E6%95%B0%E7%9B%AE"><span class="nav-number">2.1.</span> <span class="nav-text">最多可以摧毁的敌人城堡数目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E7%81%AD%E6%80%AA%E7%89%A9%E7%9A%84%E6%9C%80%E5%A4%A7%E6%95%B0%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">消灭怪物的最大数量</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">3.</span> <span class="nav-text">动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%E4%B8%80%E5%9D%97%E7%9F%B3%E5%A4%B4%E7%9A%84%E9%87%8D%E9%87%8F-II"><span class="nav-number">3.1.</span> <span class="nav-text">最后一块石头的重量 II</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

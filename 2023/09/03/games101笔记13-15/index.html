@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第十三课Whitted-Style光线追踪光线追踪与光栅化是两种不同的着色方式。 光栅化最大的问题是不能很好的去表示全局效果，不能很好的展现软阴影、光泽反射、间接光照等。 光线追踪相对于光栅化更加的准确，但是其工作开销更大，目前较多的应用在影视中，但是由于gpu性能的提升最近越来越多的游戏也开始支持光追了。 在光追中，我们分析光线发现其有以下性质（视觉上，抛开物理不谈）：  光是直线 光不会交叉">
+<meta property="og:type" content="article">
+<meta property="og:title" content="games101笔记13-15">
+<meta property="og:url" content="http://ximu3df.github.io/2023/09/03/games101%E7%AC%94%E8%AE%B013-15/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="第十三课Whitted-Style光线追踪光线追踪与光栅化是两种不同的着色方式。 光栅化最大的问题是不能很好的去表示全局效果，不能很好的展现软阴影、光泽反射、间接光照等。 光线追踪相对于光栅化更加的准确，但是其工作开销更大，目前较多的应用在影视中，但是由于gpu性能的提升最近越来越多的游戏也开始支持光追了。 在光追中，我们分析光线发现其有以下性质（视觉上，抛开物理不谈）：  光是直线 光不会交叉">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-10-55-12.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-10-54-54.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-03-52.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-08-21.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-13-30.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-20-12.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-27-29.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-32-30.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-33-52.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-38-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-46-24.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-11-59-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-16-11-53.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-16-33-28.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-16-43-19.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-03-53.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-26-09.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-51-16.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-52-24.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-53-39.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-55-18.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-54-23.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-03-17-54-57.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-09-44-41.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-09-50-27.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-09-51-13.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-09-51-33.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-10-11-20.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-10-20-01.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-10-27-40.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-10-41-57.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-08-50.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-17-45.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-26-18.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-45-07.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-46-32.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-48-33.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-55-58.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-56-44.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-57-07.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-05-12-57-43.png">
+<meta property="article:published_time" content="2023-09-03T02:25:08.000Z">
+<meta property="article:modified_time" content="2023-09-05T05:26:14.136Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="games101笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ximu3df.github.io/images/2023-09-03-10-55-12.png">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/09/03/games101%E7%AC%94%E8%AE%B013-15/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>games101笔记13-15 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/09/03/games101%E7%AC%94%E8%AE%B013-15/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          games101笔记13-15
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-03 10:25:08" itemprop="dateCreated datePublished" datetime="2023-09-03T10:25:08+08:00">2023-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-05 13:26:14" itemprop="dateModified" datetime="2023-09-05T13:26:14+08:00">2023-09-05</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第十三课"><a href="#第十三课" class="headerlink" title="第十三课"></a>第十三课</h1><h2 id="Whitted-Style光线追踪"><a href="#Whitted-Style光线追踪" class="headerlink" title="Whitted-Style光线追踪"></a>Whitted-Style光线追踪</h2><p>光线追踪与光栅化是两种不同的着色方式。</p>
+<p>光栅化最大的问题是不能很好的去表示全局效果，不能很好的展现软阴影、光泽反射、间接光照等。</p>
+<p>光线追踪相对于光栅化更加的准确，但是其工作开销更大，目前较多的应用在影视中，但是由于gpu性能的提升最近越来越多的游戏也开始支持光追了。</p>
+<p>在光追中，我们分析光线发现其有以下性质（视觉上，抛开物理不谈）：</p>
+<ol>
+<li>光是直线</li>
+<li>光不会交叉</li>
+<li>光线从光源发出，在场景中反复反射，最后到达观察者眼中。（光的可逆性，也就是说我们可以顺着我们看到的光线，可以找到光源）</li>
+</ol>
+<p>光追中的追踪是从我们的观察点出发，经过反射，找到光源。</p>
+<p><strong>光线投射</strong>：从视觉点发射一个射线到一个像素上，找到该像素对应的空间中的点，计算该点是否被光线照射到，有了观察向量、光线向量以及法向量，就可以通过光照模型来进行着色了。</p>
+<p><img src="/images/2023-09-03-10-55-12.png" alt></p>
+<p><strong>Whitted-Style</strong>工作效果：</p>
+<p><img src="/images/2023-09-03-10-54-54.png" alt></p>
+<p>其工作方式为：和光线投射相似，当从视点发射一个射线后，我们计算其接触点的反射向量和折射向量，并计算反射折射向量的对应反射和折射。然后我们会计算这些向量接触物体的点判断光线是否可以照亮，然后通过获得的向量信息进行着色。（折射反射的光线一般会有衰减，否则会过度曝光）</p>
+<p><img src="/images/2023-09-03-11-03-52.png" alt></p>
+<p>光追中的技术问题：</p>
+<ol>
+<li>计算射线到物体上的交点。射线的定义：使用两个量来定义，起点o和方向d。</li>
+</ol>
+<p><img src="/images/2023-09-03-11-08-21.png" alt><br>和球做交点：</p>
+<p><img src="/images/2023-09-03-11-13-30.png" alt><br>上述计算公式只有t为未知量，我们可以直接解方程获得t的取值。</p>
+<p>根据上述内容推断，我们对于各种物体的求解方法如下：</p>
+<p><img src="/images/2023-09-03-11-20-12.png" alt></p>
+<p>只需要解出t即可获得结果。</p>
+<ol>
+<li><p>不规则网格的交点求取：按照求交的方法对所有面片进行计算开销过大。先说明求交点的方法：<br>光线和三角形求交可以先转化为光线和平面求交，再求点是否在三角形内。</p>
+<p>平面的定义方法：一个方向（法线）和一个点。法线可以确定面的朝向，点确定面的位置。</p>
+<p><img src="/images/2023-09-03-11-27-29.png" alt></p>
+<p>计算光线和平面的交点，可以先判断一个点是否在平面内：<br><img src="/images/2023-09-03-11-32-30.png" alt></p>
+<p>也就是平面上的点和定义平面的点连成的向量与n垂直就说嘛其在平面内。更具上述式子，我们可以设计对应的计算公式（关于t的方程）：<br><img src="/images/2023-09-03-11-33-52.png" alt></p>
+<p>带入后有：(o + td - p’)点乘 N = 0</p>
+<p>由此式子解出t的值（t大于等于0）</p>
+<p>求出交点后，我们判断该点是否在三角形内即可（边向量和点叉乘判断结果符号是否相同）</p>
+<p>整个流程较长，是否有较简单的算法呢？</p>
+<p><img src="/images/2023-09-03-11-38-34.png" alt></p>
+<p>用三角形的重心点来和射线交点进行判断，使用线代的计算方法来进行计算的简化。只需1-b1-b2、b1、b2大于0即说明点在三角形内。</p>
+<p>但是就算使用了计算加速，我们还是需要对所有的三角型进行计算，开销还是非常大。以下述场景为例：<br><img src="/images/2023-09-03-11-46-24.png" alt><br>该场景共有1000多万个三角面片，使用上述思路渲染开销极大。我们要寻找一种方法来进行加速。为了加速我们可以提出一个概念：<br><strong>包围盒</strong></p>
+<p>包围盒的概念：如果我们有一个复杂的物体，我们可以使用一个简单的几何体将其包围，这个包围的简单几何体就是包围盒。</p>
+<p>如果我们的光线连包围盒都无法接触，那么我们就不对该包围盒中的面片进行计算。</p>
+<p><strong>AABB</strong>包围盒：长方体，且平每个面行于xyz轴（世界坐标系）。</p>
+<p>如何判定射线和包围盒相交呢？<br>判断射线和包围盒和三个轴的平行边是否有交点：<br><img src="/images/2023-09-03-11-59-34.png" alt><br>上图拓宽到三维空间，我们就会获得三组tmin、tmax,我们找到最大的tmin，找到最小tmax，就可以知道光线何时进入盒子何时离开盒子。如果我们的进入时间小于离开时间，则说明有交点，否则无交点。如果离开时间小于0，说明无交点；如果离开时间大于等于0，进入时间小于0，则说明光源在物体内，一定有交点。</p>
+<p>总结aabb和光线有交点的条件是：进入时间&lt;离开时间&amp;&amp;离开时间&gt;=0</p>
+</li>
+</ol>
+<h1 id="第十四课"><a href="#第十四课" class="headerlink" title="第十四课"></a>第十四课</h1><h2 id="aabb如何提速光追"><a href="#aabb如何提速光追" class="headerlink" title="aabb如何提速光追"></a>aabb如何提速光追</h2><p>包围盒中的进行预处理，将包围盒进行空间划分，将有物体的格子做额外记录：<br>   <img src="/images/2023-09-03-16-11-53.png" alt></p>
+<p>   经过预处理，我们判断光线是否经过盒子中包含物体的空间块，如果通过就开始计算是否和物体有交点。</p>
+<p>   判定光线通过的空间块的方法有：bresenham算法的思想（直线绘制算法），把分割空间类似为一个光栅化的格子，然后用直线绘制方法来进行判定（但是不用，只是一个思路）。在实际的运用中，空间分割的空间块的数量一般是要取一个平衡值的（太多了运算开销大，少了不能准确找到物体）。</p>
+<p>   缺点：如果有物体分布不够多，会占用大量的时间，优化效果不好。</p>
+<h2 id="空间划分"><a href="#空间划分" class="headerlink" title="空间划分"></a>空间划分</h2><p><img src="/images/2023-09-03-16-33-28.png" alt></p>
+<h3 id="Oct-tree"><a href="#Oct-tree" class="headerlink" title="Oct-tree"></a>Oct-tree</h3><p>八叉树，将空间分为4块，将每个子节点再分为四块（在三维空间为8块）。在物体较多的格子继续划分，没有物体的格子不再划分。这也可以防止平均划分出现的缺点。</p>
+<h3 id="KD-tree"><a href="#KD-tree" class="headerlink" title="KD-tree"></a>KD-tree</h3><p>和八叉树几乎完全相同，每次分割的时候二分，获得结果类似于二叉树，且不是固定的二分，而是动态的二分。例如上图中每次划分都不是水平划分的。在三维中，我们就每次分别按照x-&gt;y-&gt;z这样的过程来进行二分。</p>
+<h3 id="BSP-tree"><a href="#BSP-tree" class="headerlink" title="BSP-tree"></a>BSP-tree</h3><p>每一次选一个方向，对空间进行二分（不是很平竖直的分割）。但是问题是在高维时计算会很复杂，例如三维就不是一个线了，而是一个旋转的平面。</p>
+<h2 id="KD-tree-1"><a href="#KD-tree-1" class="headerlink" title="KD-tree"></a>KD-tree</h2><p><img src="/images/2023-09-03-16-43-19.png" alt></p>
+<p>上图蓝色部分也要同b一样操作，这里省去了。KD-tree的目的是尽量将物体存储在二叉树的叶子节点中。</p>
+<p>射线在KD-tree中遍历的过程是从根节点开始判断是否经过该节点，通过则继续进入之后节点的判定，直到我们遇到了叶子节点，如果和叶子节点有交点则与该节点中的所有三角形做交点的判定。该过程可以有效的剪枝，从而达到加速的效果（这是一种较为简单的方法）。</p>
+<p>缺点：一个物体可能存在多个节点中，kd-tree很难建立（要考虑三角形和格子的求交）</p>
+<h2 id="BVH"><a href="#BVH" class="headerlink" title="BVH"></a>BVH</h2><p>原理：</p>
+<ol>
+<li>首先将场景做一个包围盒。</li>
+<li>将物体分为两个部分，将两部分分别求包围盒。</li>
+<li>继续划分。</li>
+<li>叶子节点中物体数量达到需求即可结束。<br><img src="/images/2023-09-03-17-03-53.png" alt></li>
+</ol>
+<p>优点：一个物体只在一个叶子节点中，同时不用判定三角形和边界的问题。</p>
+<p>存在的小问题：对空间的划分没有严格的划分开，会出现相交的情况。</p>
+<p>分割思路：每次选择最长的轴进行分割。分割的物体选择一般是通过快速选择算法来选出中位数，具体思路是将物体对应轴的值存入（无序）然后通过快速排序的思想来找到第n/2个数，然后以此物体进行划分。</p>
+<p>经过上述的分割，我们就获得了一个BVH的树，中间节点只存包围盒，叶子节点存物体。</p>
+<p>具体的求交方法：</p>
+<p><img src="/images/2023-09-03-17-26-09.png" alt></p>
+<p>（同KD-tree，递归求交，直到叶子节点）</p>
+<p><strong>至此，光追的加速部分结束。</strong></p>
+<h2 id="辐射度量学"><a href="#辐射度量学" class="headerlink" title="辐射度量学"></a>辐射度量学</h2><p>是高级的光追（区别于Whitted-Style）。</p>
+<p>其工作是描述光线，且还是基于几何度量学来做的。</p>
+<p>该部分的学习目的：搞清楚<strong>Radiant flux,intensity,irradiance,radiance</strong>是什么。</p>
+<p>题外话：学习一个东西的顺序是为什么学，学什么，学的东西具体是怎么做的。</p>
+<h3 id="Radiant-flux"><a href="#Radiant-flux" class="headerlink" title="Radiant flux"></a>Radiant flux</h3><p>radiant energy：是一种能量，单位焦耳。<br>Radiant flux：单位时间的能量，也就是功率，单位瓦特。</p>
+<h3 id="Radiant-intensity"><a href="#Radiant-intensity" class="headerlink" title="Radiant intensity"></a>Radiant intensity</h3><p>定义：能量除以立体角。也就是功率除以立体角。单位是cd（candela坎德拉）。</p>
+<p>什么是立体角：一般定义角使用弧度来定义</p>
+<p><img src="/images/2023-09-03-17-51-16.png" alt></p>
+<p>角度等于弧长/半径。整个圆的角度为2pi。立体角则是在三维空间中的延伸：</p>
+<p><img src="/images/2023-09-03-17-52-24.png" alt></p>
+<p>立体角等于球体部分面积/半径的平方，球体的立体角就是4pi。</p>
+<p>单位立体角：使用一个较小的面积来定义：</p>
+<p><img src="/images/2023-09-03-17-53-39.png" alt></p>
+<p>对于整个球来说：</p>
+<p><img src="/images/2023-09-03-17-55-18.png" alt></p>
+<p>总结一下立体角：<br>我们给出任意一个面片，面片面积为dS，法线方向为n，对某一点o所张开的立体角的求取方式：首先知道球体半径为r，r方向与法线放线的夹角就是面片与o点以r为半径切出的球面的的夹角，于是椎体的球面部分的面积就是dS * cosθ（θ为面之间的夹角）。当然如果面片直接存在于球体上，我们的计算方式可以变为通过其中心到o点对于坐标轴中变化的角度来求取，如上图中的θ以及Φ分别为关于z轴的夹角以及关于z轴旋转的角度。我们将面片近似为方片，获得其面积公式：</p>
+<p><img src="/images/2023-09-03-17-54-23.png" alt></p>
+<p>再除以r²：</p>
+<p><img src="/images/2023-09-03-17-54-57.png" alt></p>
+<p>这样就获得了Radiant intensity。</p>
+<h1 id="第十五课"><a href="#第十五课" class="headerlink" title="第十五课"></a>第十五课</h1><p>光线传播和全局光照：</p>
+<h2 id="辐射度量学（接上节）"><a href="#辐射度量学（接上节）" class="headerlink" title="辐射度量学（接上节）"></a>辐射度量学（接上节）</h2><p>回顾：<br>Radiant flux（power）：单位时间内的能量。本课程中使用的能量考虑的都是单位时间能量。</p>
+<p>Radiant intensity：一个立体角上的能量。</p>
+<p>立体角：正对球心的面积（将物体投影到球上的面积）除以半径的平方。描述了一个空间中锥张开的大小。 微分立体角的求取方式就是上节课结尾使用的求取方式。</p>
+<p>新概念：</p>
+<p>irradiance：能量除以面积，和Radiant intensity的区别是计算的为面积上的大小。能量的方向需要与照射面垂直，不垂直计算其投影再计算。</p>
+<p>先回顾一下着色部分的内容：兰伯特余弦定律</p>
+<p><img src="/images/2023-09-05-09-44-41.png" alt></p>
+<p>我们定义的是必须垂直于面，例如上图第二种情况，我们发现其只接收了一般一半，所以我们直接将整个光线倾斜的角度进行投影计算。</p>
+<p><img src="/images/2023-09-05-09-50-27.png" alt></p>
+<p>我们可以使用irradiance来分析上图：</p>
+<p><img src="/images/2023-09-05-09-51-13.png" alt></p>
+<p><img src="/images/2023-09-05-09-51-33.png" alt></p>
+<p>我们会发现他一直在衰减，而Radiant intensity没有衰减（立体角没有改变）。</p>
+<p>Radiance（重要）:</p>
+<p>定义：单位立体角和单位面积上有多少能量。（两次微分，单位立体角和单位面积） </p>
+<p><img src="/images/2023-09-05-10-11-20.png" alt></p>
+<p><strong>irradiance和Radiance的区别：</strong> Radiance就是在irradiance的基础上增加了一个方向性。</p>
+<p><img src="/images/2023-09-05-10-20-01.png" alt></p>
+<p>由于L是能量除以面积和立体角，所以E可以是L <em> cosθ </em> ω（ω为某一个方向射来的光线）。从几何上来说，就意味着，某一个立体角方向射到区域A上的能量是多少。但是由于光是从四面八方射来的，我们可以进行一个积分计算，获得所有能量：</p>
+<p><img src="/images/2023-09-05-10-27-40.png" alt></p>
+<p>其中H²为单位半球。</p>
+<h2 id="BRDF-双向反射分布函数-反射方程"><a href="#BRDF-双向反射分布函数-反射方程" class="headerlink" title="BRDF(双向反射分布函数)反射方程"></a>BRDF(双向反射分布函数)反射方程</h2><p>光线射入物体表面被吸收，物体表面再发射光线出去。例如从某个立体角方向的光线射入到某个点(单位面积)，该点吸收了能量，然后该点会向另一个方向辐射出光线的能量。</p>
+<p>而BRDF则是将这个过程进行一个描述，即某一点从某个立体角方向获得的能量会如何分配到反射到其他的立体角上。</p>
+<p><img src="/images/2023-09-05-10-41-57.png" alt></p>
+<p>上图就是该公式的原理即：初射方向上射入某一个位置的radiance会在受照射点上留下irrandiance，用radiance除以irrandiance就可以获得反射出的能量的比例。<br>也就是下述公式：</p>
+<p><img src="/images/2023-09-05-12-08-50.png" alt></p>
+<p>至于如何反射，我们需要考虑反射的类型：<br>镜面反射的话会直接不向其他位置反射，漫反射则会均等的反射到各个方向等。</p>
+<p>其概念就是描述了光线和物体的作用方式。这个可以决定物体不同材质的具体反射性质。</p>
+<p>工作流程：<br><img src="/images/2023-09-05-12-17-45.png" alt></p>
+<ol>
+<li>计算每一个入射光线到照射点的radiance。</li>
+<li>乘上cosθ（兰伯特余弦定律）</li>
+<li>乘上BRDF。(这一步是用来判断radiance的反射比例是多少)</li>
+<li>结果就是观察点能够观察到的颜色。</li>
+</ol>
+<h2 id="渲染方程"><a href="#渲染方程" class="headerlink" title="渲染方程"></a>渲染方程</h2><p>如果我们只考虑光线弹射一次，我们的只有光源的radiance。但是一般物体都会反射，所以其光源肯定不为一个。</p>
+<p>渲染方程：</p>
+<p><img src="/images/2023-09-05-12-26-18.png" alt></p>
+<p>Le是物体自发光发出的randiance（不发光则没有），第二部分为射入的物体并反射到Lo的光线。所有的光线传播则可以用上述公式来表示，这就是渲染方程。物体表面的光线传播都是满足这个渲染方程的（重点在BRDF）。</p>
+<p>如果我使用一个面光源来照射一个点，则我们可以将面光源分成点光源，作为点光源的集合，我们就将之积分求出面光源射入的radiance。</p>
+<p>同时我们射入的光还有可能是其他物体的反射光，但是具体的反射光大小我们是不知道的，但是我们可以通过递归的方式来进行具体的计算，因为在这个过程中，我们以知入射角、材质（BRDF）、光源、自发光。唯一未知的就是其他物体的反射光，同时反射光是由场景光源发射的光获取的，所以我们通过递归，递归的最后结果就是找到只有光源的状况，然后逐步计算反射光，最后获得我们的结果。</p>
+<p><img src="/images/2023-09-05-12-45-07.png" alt></p>
+<p>我们还可以继续简写：</p>
+<p><img src="/images/2023-09-05-12-46-32.png" alt></p>
+<p>L左是物体辐射出的能量、E是自己发出的能量、K是反射操作符、L右是其他物体发出的能量。这样写的目的是为了解方程，由于L是递归定义的，所以经过数学的变换可以获得如下结果：</p>
+<p><img src="/images/2023-09-05-12-48-33.png" alt></p>
+<p>下述结果为1-K的逆的展开（类似泰勒公式）。其结果我们可以理解为我们看到的最后一个图片的L是由我们光源经过多次反射的和得到的结果（妙啊）。这就是全局光照的原理。</p>
+<p>一些渲染效果：<br><img src="/images/2023-09-05-12-55-58.png" alt></p>
+<p>上述为直接光照效果</p>
+<p><img src="/images/2023-09-05-12-56-44.png" alt></p>
+<p>上述为一次间接光照的效果</p>
+<p><img src="/images/2023-09-05-12-57-07.png" alt></p>
+<p>上述为三次间接光照效果</p>
+<p><img src="/images/2023-09-05-12-57-43.png" alt></p>
+<p>上述为四次的效果。</p>
+<p>上面三次和四次有个灯的有区别，三次反射次数不能将灯中的光射出，所以较暗，但是四次正好灯中的光射出了，所以可以看清灯。</p>
+<p>如果做无限次反射，那么就会收敛到一个亮度。</p>
+<h2 id="简单的概率论回顾"><a href="#简单的概率论回顾" class="headerlink" title="简单的概率论回顾"></a>简单的概率论回顾</h2><p>随机变量和概率的回顾（学过不赘述了）。</p>
+<p>概率：非负、和为1.<br>期望：对应随机变量*概率然后加上所有项。（例如骰子的期望是3.5）。</p>
+<p>PDF（连续情况下如何描述变量以及分布）：概率密度函数。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/games101%E7%AC%94%E8%AE%B0/" rel="tag"># games101笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/02/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A002/" rel="prev" title="算法学习02">
+      <i class="fa fa-chevron-left"></i> 算法学习02
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/08/games101%E7%AC%94%E8%AE%B016-18/" rel="next" title="games101笔记16-18">
+      games101笔记16-18 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E8%AF%BE"><span class="nav-number">1.</span> <span class="nav-text">第十三课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Whitted-Style%E5%85%89%E7%BA%BF%E8%BF%BD%E8%B8%AA"><span class="nav-number">1.1.</span> <span class="nav-text">Whitted-Style光线追踪</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%AF%BE"><span class="nav-number">2.</span> <span class="nav-text">第十四课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#aabb%E5%A6%82%E4%BD%95%E6%8F%90%E9%80%9F%E5%85%89%E8%BF%BD"><span class="nav-number">2.1.</span> <span class="nav-text">aabb如何提速光追</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E5%88%92%E5%88%86"><span class="nav-number">2.2.</span> <span class="nav-text">空间划分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Oct-tree"><span class="nav-number">2.2.1.</span> <span class="nav-text">Oct-tree</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KD-tree"><span class="nav-number">2.2.2.</span> <span class="nav-text">KD-tree</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BSP-tree"><span class="nav-number">2.2.3.</span> <span class="nav-text">BSP-tree</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KD-tree-1"><span class="nav-number">2.3.</span> <span class="nav-text">KD-tree</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BVH"><span class="nav-number">2.4.</span> <span class="nav-text">BVH</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6"><span class="nav-number">2.5.</span> <span class="nav-text">辐射度量学</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Radiant-flux"><span class="nav-number">2.5.1.</span> <span class="nav-text">Radiant flux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Radiant-intensity"><span class="nav-number">2.5.2.</span> <span class="nav-text">Radiant intensity</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%94%E8%AF%BE"><span class="nav-number">3.</span> <span class="nav-text">第十五课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%90%E5%B0%84%E5%BA%A6%E9%87%8F%E5%AD%A6%EF%BC%88%E6%8E%A5%E4%B8%8A%E8%8A%82%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">辐射度量学（接上节）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BRDF-%E5%8F%8C%E5%90%91%E5%8F%8D%E5%B0%84%E5%88%86%E5%B8%83%E5%87%BD%E6%95%B0-%E5%8F%8D%E5%B0%84%E6%96%B9%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">BRDF(双向反射分布函数)反射方程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%B2%E6%9F%93%E6%96%B9%E7%A8%8B"><span class="nav-number">3.3.</span> <span class="nav-text">渲染方程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E6%A6%82%E7%8E%87%E8%AE%BA%E5%9B%9E%E9%A1%BE"><span class="nav-number">3.4.</span> <span class="nav-text">简单的概率论回顾</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本栏记录一下这段时间做过的算法题目以及笔试遇到的算法题。算法我刷的题单是代码随想录，然后会记录一下遇到的新题。 旧题复习二分查找：题目链接 https:&#x2F;&#x2F;leetcode.cn&#x2F;problems&#x2F;binary-search&#x2F; 解决方法：12345678910111213141516171819202122232425class Solution &amp;#123;public:    int sear">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法学习01">
+<meta property="og:url" content="http://ximu3df.github.io/2023/08/30/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A001/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="本栏记录一下这段时间做过的算法题目以及笔试遇到的算法题。算法我刷的题单是代码随想录，然后会记录一下遇到的新题。 旧题复习二分查找：题目链接 https:&#x2F;&#x2F;leetcode.cn&#x2F;problems&#x2F;binary-search&#x2F; 解决方法：12345678910111213141516171819202122232425class Solution &amp;#123;public:    int sear">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-30T13:21:24.000Z">
+<meta property="article:modified_time" content="2023-09-14T08:23:19.165Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="算法学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/08/30/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A001/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>算法学习01 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/08/30/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A001/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法学习01
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-30 21:21:24" itemprop="dateCreated datePublished" datetime="2023-08-30T21:21:24+08:00">2023-08-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-14 16:23:19" itemprop="dateModified" datetime="2023-09-14T16:23:19+08:00">2023-09-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本栏记录一下这段时间做过的算法题目以及笔试遇到的算法题。算法我刷的题单是代码随想录，然后会记录一下遇到的新题。</p>
+<h1 id="旧题复习"><a href="#旧题复习" class="headerlink" title="旧题复习"></a>旧题复习</h1><h2 id="二分查找："><a href="#二分查找：" class="headerlink" title="二分查找："></a>二分查找：</h2><p>题目链接 <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/binary-search/">https://leetcode.cn/problems/binary-search/</a></p>
+<p>解决方法：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    int search(vector&lt;int&gt;&amp; nums, int target) </span><br><span class="line">    &#123;</span><br><span class="line">        int min = 0;;</span><br><span class="line">        int max = nums.size()-1;</span><br><span class="line">        while(min&lt;=max)</span><br><span class="line">        &#123;</span><br><span class="line">            int mid = min+(max-min)/2;</span><br><span class="line">            if(nums[mid] == target)</span><br><span class="line">            &#123;</span><br><span class="line">                return mid;</span><br><span class="line">            &#125;</span><br><span class="line">            else if(nums[mid]&gt;target)</span><br><span class="line">            &#123;</span><br><span class="line">                max = mid-1;</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                min = mid+1;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><br>解决思路：<br>二分查找是一种分治的思想，将复杂的问题简化，在更小的区间里使用同样的方法进行计算。所以必须是有序的数据才可使用二分法，否则分割后无法获得更小的区间。每一次分割后对将搜索数组减小到目标可能存在的区间。这种搜索方法的时间复杂度可以达到O(logn)而一般的顺序遍历则复杂度为O(n)。</p>
+<h2 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h2><p>leetcode原题地址：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/remove-element/">https://leetcode.cn/problems/remove-element/</a></p>
+<p>解题思路：</p>
+<p>原地删除数组中的数，这道题的思路是使用双指针法，第一个慢指针用来指向当前遍历到的位置，然后快指针用指向要需要的元素，当慢指针遇到了需要删除的元素时，移动快指针，直到快指针指向的元素是需要保留的元素，然后交换快慢指针的元素。同时快慢指针同时向前并继续上述步骤直到快指针指向空。期间我们只需要记录慢指针的移动次数，因为慢指针指向的就是我们需要保留的元素。</p>
+<p>实现代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">removeElement</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> val)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="type">int</span> j = <span class="number">0</span>;<span class="comment">//快指针</span></span><br><span class="line">        <span class="type">int</span> n = nums.<span class="built_in">size</span>();<span class="comment">//总数</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)<span class="comment">//i为慢指针</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">while</span>(nums[j]==val&amp;&amp;j&lt;nums.<span class="built_in">size</span>())<span class="comment">//如果快指针移动后还是指向需要删除元素</span></span><br><span class="line">            &#123;</span><br><span class="line">                j++;</span><br><span class="line">                n--;<span class="comment">//也可以记录快指针运动的次数，这个是需要删去元素的数量</span></span><br><span class="line">                <span class="keyword">if</span>(j==nums.<span class="built_in">size</span>())<span class="comment">//快指针是否为空</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span> n;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            nums[i] = nums[j];<span class="comment">//交换数据可以使用swap也可以直接覆盖值，因为删除的元素不需要保留</span></span><br><span class="line">            j++;<span class="comment">//同时走一次</span></span><br><span class="line">            <span class="keyword">if</span>(j==nums.<span class="built_in">size</span>())<span class="comment">//快指针是否为空</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> n;<span class="comment">//返回元素数量</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><h2 id="背包问题"><a href="#背包问题" class="headerlink" title="背包问题"></a>背包问题</h2><p>学习视频链接：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1cg411g7Y6/?vd_source=02049ce7fe76d9f1b0e50f98f5d785eb">https://www.bilibili.com/video/BV1cg411g7Y6/?vd_source=02049ce7fe76d9f1b0e50f98f5d785eb</a></p>
+<p>简单的01背包问题：<br>给出n种物品，每一种物品只有一个，每个物品有自己的重量和价值，还有一个载重为m的背包，尽可能往背包种装载，问背包能装的最大价值是多少。<br>如果使用暴力解法，我们会法线时间复杂度非常高，一般使用回溯算法进行枚举。时间复杂度非常高一般为O(n²)。<br>使用动态规划的方法可以较好的解决该类问题。<br>做动态规划首先要设定一个dp数组。<br>这里我们创建一个二维的dp数组：<strong>dp[i][j]</strong></p>
+<p>在这个dp数组中，i表示下标为0-i的物品。而从0-i中任意取物品，放入容量为j的背包中。</p>
+<p>围绕上述的含义，我们继续来确定递推公式：</p>
+<p><strong>我们知道dp数组的i代表的时物品编号，同时j为从0-i中放入小于等于j的重量的物品后的价值，那么我们可以知道如果我们的背包中不包括i，则所选数组应该为dp[i-1][j]。如果我们要放入物品，我们可以得到dp[i-1][j-weight[i]]+value[i]获得，如果能够放下，则取dp[i-1][j-weight[i]+value[i]]。否则选择之前的dp[i-1][j]。最终我们的递推公式为：dp[i][j] = max(dp[i-1][j-weight[i]]+value[i],dp[i-1][j])。（当j-weight[i]&lt;0时直接取dp[i-1][j]）</strong></p>
+<p><strong>然后时我们dp数组的初始化，由上述内容可以看出，我们的递推方向是从左上到右下的过程来获取的。所以我们只需要初始化第一行和第一列即可。</strong></p>
+<h2 id="滚动数组"><a href="#滚动数组" class="headerlink" title="滚动数组"></a>滚动数组</h2><p>通过上述方法我们可以发现，二维数组其实是可以压缩成一维数组的。我们来看dp数组的意义。i代表了物品的编号，而j代表了在载重量为j的背包中能够保有的最大价值量。所以实际上i是可以略去的，因为物品的选择是可以被j来体现的，在j这个载重量下可以放入新的物体，那么该物体就可以放入并增加总价值；无法放入则不对价值造成影响，我们可以继续尝试放入其他的物品。</p>
+<p>递推公式：<br><strong>dp[j] = max(dp[j-weight[i]]+value[i],dp[j]),如果无法放入的话直接取dp[j]</strong></p>
+<h2 id="分割等和子集"><a href="#分割等和子集" class="headerlink" title="分割等和子集"></a>分割等和子集</h2><p>这是一个可以用01背包思想来解决的问题。leetcode地址：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/partition-equal-subset-sum/description/">https://leetcode.cn/problems/partition-equal-subset-sum/description/</a></p>
+<p>根据题目要求，如果我们可以将nums数组分割为两个一样的和的子集，那么返回true，否则为false。</p>
+<p>分析题目，我们可以知道，由于nums是一个整数数组，如果nums数组的和的一半不为整数，那么必然是不能找到符合要求的两个子集的。所以第一步我们可以求数组nums的和，存在sum中，并判断是否复合一半为整数这个条件：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)</span><br><span class="line">    sum+=nums[i];</span><br><span class="line"><span class="keyword">if</span>(sum%<span class="number">2</span>!=<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    sum/=<span class="number">2</span>;</span><br></pre></td></tr></table></figure><br>经过这一步，我们就获取了我们需要求出的一个结果sum，只要我们的数组中有元素的和为sum，就可以返回true了。</p>
+<p>这个求取元素和的过程我们可以使用01背包的思路来实现。首先我们要确定我们的dp数组，这里我们可以使用一维的或者二维的，由于一维比较省空间，所以我们选择一维数组。一维dp[j]数组的j代表了nums中可以放入的元素的和的最大值（其大小小于等于j）。</p>
+<p>我们首先初始化一个数组，数组的长度为我们要求的sum的两倍，这样可以保证我们能将所有的nums遍历一遍并放入dp数组中，在将所有的nums放入dp数组中后，我们只需要查看dp[sum]是否等于sum,就可以判断该数组能否分割成两个和相同的子集了。</p>
+<p>同时要注意一维01背包dp数组的遍历方法，在将元素放入dp数组时要反向遍历，否则会导致可放入元素重复放入。</p>
+<p>具体工作代码如下：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dp</span><span class="params">(sum*<span class="number">2</span>,<span class="number">0</span>)</span></span>;<span class="comment">//设置dp数组</span></span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)<span class="comment">//遍历nums的各个元素</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = sum;j&gt;=nums[i];j--)<span class="comment">//判断元素可以在什么位置放入</span></span><br><span class="line">        dp[j] = <span class="built_in">max</span>(dp[j-nums[i]]+nums[i],dp[j]);<span class="comment">//放入元素</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(dp[sum]==sum)<span class="comment">//判断在和的一半的的位置是否放满，放满意味着可以将这些元素分成两个和相同的子集</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"><span class="keyword">return</span> <span class="literal">false</span>;</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="tag"># 算法学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/30/7-9/" rel="prev" title="games101笔记7-9">
+      <i class="fa fa-chevron-left"></i> games101笔记7-9
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/31/games101%E7%AC%94%E8%AE%B010-12/" rel="next" title="games101笔记10-12">
+      games101笔记10-12 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A7%E9%A2%98%E5%A4%8D%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">旧题复习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">二分查找：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4%E5%85%83%E7%B4%A0"><span class="nav-number">1.2.</span> <span class="nav-text">移除元素</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">2.</span> <span class="nav-text">动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">背包问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BB%9A%E5%8A%A8%E6%95%B0%E7%BB%84"><span class="nav-number">2.2.</span> <span class="nav-text">滚动数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%89%B2%E7%AD%89%E5%92%8C%E5%AD%90%E9%9B%86"><span class="nav-number">2.3.</span> <span class="nav-text">分割等和子集</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第十九课相机的成像原理：最早的相机实现过程是通富哦小孔成像的原理来实现的。这种相机称之为针孔相机。  在相机中有一个部件，  传感器用于记录irradiance，也就是收集到的光的能量。其收集方式为：  当然，传感器有方向的接收光源（randiance）目前也有人在研究。 针孔相机：很早就被发现小孔成像原理，时至今日还是可以这个原理来拍照，但是针孔相机拍摄的结果都是清晰的，没有深度可言（没有聚焦以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="games101笔记19-21">
+<meta property="og:url" content="http://ximu3df.github.io/2023/09/13/games101%E7%AC%94%E8%AE%B019-21/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="第十九课相机的成像原理：最早的相机实现过程是通富哦小孔成像的原理来实现的。这种相机称之为针孔相机。  在相机中有一个部件，  传感器用于记录irradiance，也就是收集到的光的能量。其收集方式为：  当然，传感器有方向的接收光源（randiance）目前也有人在研究。 针孔相机：很早就被发现小孔成像原理，时至今日还是可以这个原理来拍照，但是针孔相机拍摄的结果都是清晰的，没有深度可言（没有聚焦以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-13-14-59-58.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-13-15-04-38.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-09-39-30.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-09-43-31.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-10-11-30.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-10-20-29.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-14-56-00.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-10-44.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-12-07.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-14-08.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-14-53.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-15-13.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-16-11.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-38-43.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-39-46.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-41-19.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-49-54.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-15-50-45.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-02-15.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-08-01.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-10-02.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-10-47.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-15-14.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-17-18.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-22-47.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-26-29.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-15-16-33-50.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-09-20-09.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-09-20-50.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-09-24-00.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-09-28-21.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-09-37-03.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-20-09.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-24-30.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-28-41.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-33-57.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-37-20.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-41-45.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-47-19.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-49-41.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-52-18.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-53-27.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-53-47.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-10-57-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-11-22.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-12-50.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-14-14.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-16-14.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-17-38.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-19-57.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-21-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-27-20.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-28-36.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-16-11-39-01.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-16-10-54.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-16-13-20.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-16-24-21.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-16-26-11.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-16-34-30.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-16-47-28.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-16-56-55.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-03-14.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-05-51.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-07-00.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-08-34.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-12-27.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-33-42.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-35-42.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-45-02.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-48-31.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-09-17-17-52-10.png">
+<meta property="article:published_time" content="2023-09-13T06:43:43.000Z">
+<meta property="article:modified_time" content="2023-09-18T08:25:55.481Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="games101笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ximu3df.github.io/images/2023-09-13-14-59-58.png">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/09/13/games101%E7%AC%94%E8%AE%B019-21/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>games101笔记19-21 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/09/13/games101%E7%AC%94%E8%AE%B019-21/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          games101笔记19-21
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-13 14:43:43" itemprop="dateCreated datePublished" datetime="2023-09-13T14:43:43+08:00">2023-09-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-18 16:25:55" itemprop="dateModified" datetime="2023-09-18T16:25:55+08:00">2023-09-18</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第十九课"><a href="#第十九课" class="headerlink" title="第十九课"></a>第十九课</h1><h2 id="相机的成像原理："><a href="#相机的成像原理：" class="headerlink" title="相机的成像原理："></a>相机的成像原理：</h2><p>最早的相机实现过程是通富哦小孔成像的原理来实现的。这种相机称之为针孔相机。</p>
+<p><img src="/images/2023-09-13-14-59-58.png" alt></p>
+<p>在相机中有一个部件，</p>
+<p><img src="/images/2023-09-13-15-04-38.png" alt></p>
+<p>传感器用于记录irradiance，也就是收集到的光的能量。其收集方式为：</p>
+<p><img src="/images/2023-09-15-09-39-30.png" alt></p>
+<p>当然，传感器有方向的接收光源（randiance）目前也有人在研究。</p>
+<p>针孔相机：很早就被发现小孔成像原理，时至今日还是可以这个原理来拍照，但是针孔相机拍摄的结果都是清晰的，没有深度可言（没有聚焦以及模糊）。我们之前所说的光线追踪也是这样的效果。</p>
+<h3 id="FOV"><a href="#FOV" class="headerlink" title="FOV"></a>FOV</h3><p>小孔成像的视场：</p>
+<p><img src="/images/2023-09-15-09-43-31.png" alt></p>
+<p>什么因素可以决定视场呢？如上图，我们从上述的图形中，假设我们认为我们的传感器是完全收集到光线的（上图蓝色平面），从两个端点处向小孔连线，然后向外延伸，这样我们就可以获得我们能够看到的视场了。</p>
+<p>由上图我们可以获得FOV角度：FOV = 2arctan(h/(2*f))</p>
+<p>根据上述结果：我们可以知道，FOV和焦距f和传感器大小h。</p>
+<h3 id="Exposure"><a href="#Exposure" class="headerlink" title="Exposure"></a>Exposure</h3><p>曝光度 = 时间*irrandiance</p>
+<p>其记录的是一个时间段内接收到的能量。</p>
+<h3 id="影响照片亮度的原因"><a href="#影响照片亮度的原因" class="headerlink" title="影响照片亮度的原因"></a>影响照片亮度的原因</h3><ol>
+<li>光圈的大小（可由相机控制），控制方式为f数（f-stop）。</li>
+<li>快门（shutter speed），控制接触光的时间长短。</li>
+<li>感光度（ISO gain），类似一种后期处理，完成光的接收后，我们对收集到的数据进行一个线性变化。</li>
+</ol>
+<p>各种因素影响的拍摄图片效果：</p>
+<p><img src="/images/2023-09-15-10-11-30.png" alt></p>
+<h4 id="ISO"><a href="#ISO" class="headerlink" title="ISO"></a>ISO</h4><p>线性变化（ISO200就是ISO100的两倍，当然这个是系数）。过大会产生噪声。</p>
+<p><img src="/images/2023-09-15-10-20-29.png" alt></p>
+<h4 id="光圈"><a href="#光圈" class="headerlink" title="光圈"></a>光圈</h4><p>用来描述光圈的大小的数称之为f数。一般写法为FN或者F/N。其中n就是我们的f数。简单来说，f数就是光圈的直径的-1次方（这是简单理解，之后会详细解释）。</p>
+<p><img src="/images/2023-09-15-14-56-00.png" alt></p>
+<p>通过调节光圈可以直接控制有多少光进入传感器中，从而获得上述效果。</p>
+<h4 id="快门"><a href="#快门" class="headerlink" title="快门"></a>快门</h4><p>快门可以起到调节曝光度的作用，同时会有几个情况：</p>
+<ol>
+<li>快门本身打开需要花费时间</li>
+<li>会有运动模糊（在快门工作的时间内物体运动产生的）。</li>
+</ol>
+<p>如果我们把快门的时间加快，我们可以减少运动模糊，但是运动模糊一般也不是坏事，有运动模糊可以制造一种速度感。（在unity中有一些特别的shader来做卡通运动模糊效果，非常酷炫）。</p>
+<p>我们可以在时间上进行采样，可以达到反走样的效果。类似于我们在走样2d图像上进行模糊或者插值。</p>
+<p>如果我们的快门速度过快（电子控制，任何时候同步打开），可能会出现问题（Rolling shutter问题）会对高速物体的成像上有扭曲。</p>
+<p><img src="/images/2023-09-15-15-10-44.png" alt></p>
+<p>因为不同时间上记录的光不同，从而造成了扭曲。</p>
+<h3 id="不同参数的同效果实现："><a href="#不同参数的同效果实现：" class="headerlink" title="不同参数的同效果实现："></a>不同参数的同效果实现：</h3><p><img src="/images/2023-09-15-15-12-07.png" alt></p>
+<p>上图表让我们知道一些不同参数的不同值可以获得类似的效果（不完全相同，但是非常相似）。F值会对景深造成影响，快门会对运动模糊造成影响。</p>
+<h3 id="高速摄影"><a href="#高速摄影" class="headerlink" title="高速摄影"></a>高速摄影</h3><p><img src="/images/2023-09-15-15-14-08.png" alt></p>
+<p>本质上是每一秒都拍很多照片，说明快门的速度非常快，同时需要保持更大的光圈。</p>
+<p>eg：</p>
+<p><img src="/images/2023-09-15-15-14-53.png" alt></p>
+<h3 id="超低速摄影："><a href="#超低速摄影：" class="headerlink" title="超低速摄影："></a>超低速摄影：</h3><p><img src="/images/2023-09-15-15-15-13.png" alt></p>
+<p>用小光圈加慢快门来实现，可以达到很多好看的效果（曝光时间非常，物体的所有剧烈运动都记录了下来）。</p>
+<p>eg:</p>
+<p><img src="/images/2023-09-15-15-16-11.png" alt></p>
+<h3 id="棱镜"><a href="#棱镜" class="headerlink" title="棱镜"></a>棱镜</h3><p>对于一般相机来说，镜头都是非常复杂的，一般来说的是由多个棱镜来做镜头的：</p>
+<p><img src="/images/2023-09-15-15-38-43.png" alt></p>
+<p>我们研究的透镜是理想化的薄透镜，平行光打入会聚集到一个点。</p>
+<p><img src="/images/2023-09-15-15-39-46.png" alt></p>
+<p>同时点光源反向传播的化可以被转化为平行光。假设一个透镜镜可以改变焦距（一般来说一个透镜不能改变的，但是现代相机使用透镜组来实现了这个效果）。</p>
+<p>透镜满足的基本物理规律：</p>
+<p><img src="/images/2023-09-15-15-41-19.png" alt></p>
+<p>上图左边的光，通过棱镜之后会有上述规律：焦距的倒数=相距（成像到棱镜的距离）的倒数+物距（物体到棱镜的距离）的倒数。固定的焦距，如果改变物距，相距也要改。</p>
+<p>推导过程：</p>
+<p><img src="/images/2023-09-15-15-49-54.png" alt></p>
+<p>上图获得两组相似三角形，</p>
+<p>然后通过两个等式解方程：</p>
+<p><img src="/images/2023-09-15-15-50-45.png" alt></p>
+<p>高中物理(不多说了 虽然我没有上过高中，乐)。</p>
+<p>光圈的原理（场景深度的解释）：</p>
+<ol>
+<li>CoC（Circle of Confusion），物体如果不在聚焦平面上，那么通过上述公式进行相似三角形的推导，我们可以知道其对应成像位置不在感光平面上，只有继续传播的光线会被收集到。假设原本的物体为一个点，经过上述过程，就会成像为一个圆。eg：</li>
+</ol>
+<p><img src="/images/2023-09-15-16-02-15.png" alt></p>
+<p>其大小的计算方式为：首先根据图片易得底为A的等腰三角形和底为C的等腰三角形相似，所以C/A = d’/Zi。d’的大小为Zi-Zs的绝对值，由此可以计算出我们成像的C的大小，一般其余值是不变的，C变化A也变化。由此我们可知C的大小是和A（光圈大小）成正比的。</p>
+<p>eg：</p>
+<p><img src="/images/2023-09-15-16-08-01.png" alt></p>
+<p>f为1.4时（大光圈），coc较大，比较模糊。f为22时（小光圈），coc较小，比较清晰。</p>
+<ol>
+<li>f的明确定义是：焦距/光圈的直径（也就是说还和焦距有关系）。一些不同相机的f：<br><img src="/images/2023-09-15-16-10-02.png" alt></li>
+</ol>
+<p>回顾上述两点，我们会发现CoC的表达式可以为：</p>
+<p><img src="/images/2023-09-15-16-10-47.png" alt></p>
+<p>所以光圈大小会实际影响CoC(和N为反比关系)。</p>
+<h3 id="模拟薄透镜的渲染方式："><a href="#模拟薄透镜的渲染方式：" class="headerlink" title="模拟薄透镜的渲染方式："></a>模拟薄透镜的渲染方式：</h3><p><img src="/images/2023-09-15-16-15-14.png" alt></p>
+<p>具体实现原理：我们首先要定义场景物体、感光平面、透镜属性(焦距和光圈大小)、物距。</p>
+<p><img src="/images/2023-09-15-16-17-18.png" alt></p>
+<p>如上图，我们进行反向追踪，从感光平面发出射线找到其从x’到x’’’的位置，这样我们就知道物体光会怎样显示在感光平面上了，我们就可以依据这个原理来进行渲染，从而达到模糊的效果。</p>
+<p><strong>景深</strong>：</p>
+<p><img src="/images/2023-09-15-16-22-47.png" alt></p>
+<p>我们使用大小光圈会影响这个模糊的范围，我们研究光圈就可以获得景深。</p>
+<p><img src="/images/2023-09-15-16-26-29.png" alt></p>
+<p>左边为景深，我们可以通过透镜将其对应到右边，获得一个成像平面的深度。这两个部分我们就称之为景深。</p>
+<p><img src="/images/2023-09-15-16-33-50.png" alt></p>
+<p>在成像平面附近，如果coc的大小是小于像素大小的，我们则称之为锐利的，否则模糊。这就是渲染时产生景深的原理。</p>
+<h1 id="第二十课"><a href="#第二十课" class="headerlink" title="第二十课"></a>第二十课</h1><h2 id="光场"><a href="#光场" class="headerlink" title="光场"></a>光场</h2><p>我们是如何看到这个世界的？</p>
+<p><img src="/images/2023-09-16-09-20-09.png" alt></p>
+<p>如果我们将上述情况中加一个幕布，显示的就是我们之前看到的画面：</p>
+<p><img src="/images/2023-09-16-09-20-50.png" alt></p>
+<p>这就是vr的原理。这样的应用已经在科幻片中进行了应用。</p>
+<p>为了描述人看到的东西，我们提出全光函数。</p>
+<h3 id="全光函数"><a href="#全光函数" class="headerlink" title="全光函数"></a>全光函数</h3><p><img src="/images/2023-09-16-09-24-00.png" alt></p>
+<p>假设我们在一个场景中，同时四面八法固定位置，我们向四周看，可以通过极坐标来表示。同时，我们在方向的基础上再添加一个颜色变量（波长），就可以表示我们看到的方向和颜色了。如果还有播放的需求，我们可以添加时间变量。如果我们的观察者是可以移动的，那么我们就可以使用空间坐标来表示观察者的位置，这样就可以表示：我们在任何位置，向任何方向，任何时刻看到的东西都是不同的。对此我们可以写出下列七维函数：</p>
+<p><img src="/images/2023-09-16-09-28-21.png" alt></p>
+<p>整个世界都可以用这个方法来表示。</p>
+<h3 id="定义光场"><a href="#定义光场" class="headerlink" title="定义光场"></a>定义光场</h3><p>定义光线：</p>
+<p><img src="/images/2023-09-16-09-37-03.png" alt></p>
+<p>光线的定义有多种，上述定义方式为方向加起始点。我们也可以通过两个点来进行定义。</p>
+<p>将物体放入一个包围盒中，我们将包围盒上任意部分发射的光作为我们可以看到物体的光，物体本身则作为黑盒，对于光照信息的接收则只靠包围盒。</p>
+<p><img src="/images/2023-09-16-10-20-09.png" alt></p>
+<p>在3d场景中，3d物体的表面可以用两个数据来表示（uv展开），由此可以用两个数来表示位置，同时方向也可以用两个数来表示。</p>
+<p><img src="/images/2023-09-16-10-24-30.png" alt></p>
+<p>在任何一个位置，我们从任何一个方向去看，都可以知道看到的光是什么（通过上述方法，直接查询光场中存储的值）。但是我们作为观测者是不会在意他是几何还是幕布的，我们可以将场景中的光线记录在平面上（上述黑盒）。</p>
+<p><img src="/images/2023-09-16-10-28-41.png" alt></p>
+<p>（有个前提是观察点在包围盒外面）</p>
+<p>实现上述的功能，我们的幕布需要两个参数（2d场景中）， 第一个是方向，第二个是起始点（3d场景中则是4个参数，两个表示方向，两个表示位置）。</p>
+<p><img src="/images/2023-09-16-10-33-57.png" alt></p>
+<p>同时还有另外一种表示方法，使用两个平面（相互平行），获取两个平面上的两个起始点，然后来确定方向。这种方法也是使用两个参数（3d场景四个参数，也就是两个位置参数）。</p>
+<p><img src="/images/2023-09-16-10-37-20.png" alt></p>
+<p>常用两个平面的数据（s，t和u，v）。用两个两个平面来定义所有的射出光线。<br>两个平面的观察效果如下：</p>
+<p><img src="/images/2023-09-16-10-41-45.png" alt></p>
+<p>从uv到st代表我们从各个角度看观察对象。从st向uv看则代表我们从各个角度观察一个部分的细节。</p>
+<p>另一种解决方法：</p>
+<p><img src="/images/2023-09-16-10-47-19.png" alt></p>
+<p>类似于昆虫的复眼，每个像素我们利用透镜将不同方向的光记录在不同的感光元件上，这样就可以通过访问各个感光元件来获得各个方向的光线。利用这个原理，我们可以制作出光场照相机：</p>
+<p><img src="/images/2023-09-16-10-49-41.png" alt></p>
+<p>其原理就是我们的微透镜原理（将像素变为透镜，然后记录各个方向的光源）。其优点是可以实现后期聚焦，可以让我们动态调节聚焦对象。</p>
+<p>具体功能效果：</p>
+<p><img src="/images/2023-09-16-10-52-18.png" alt></p>
+<p>聚焦改变：</p>
+
+<p>聚焦向近处拉近：</p>
+<p><img src="/images/2023-09-16-10-53-27.png" alt></p>
+<p>原理：<br><img src="/images/2023-09-16-10-53-47.png" alt></p>
+<p>右图透镜原本是各个像素，但是如果我们将其使用透镜进行分割，让不同方向的光分散在不同的数字感光元件上，由此每个像素就可以记录所有方向的光线。这样，我们就记录了拍摄区域的光场信息。</p>
+<p>光场照相机如何还原某个方向的图片呢？我们只需要每一个透镜都选择同一方向的光线结果，就可以获得原始照片了。</p>
+<p><img src="/images/2023-09-16-10-57-34.png" alt></p>
+<p>缺点：成本高，微透镜的实现难度高，如果落实到CG上，其开销更大。</p>
+<h2 id="颜色"><a href="#颜色" class="headerlink" title="颜色"></a>颜色</h2><p>可见光的波长在400到700。只有在这个范围内，我们才能够看到光。</p>
+<p><img src="/images/2023-09-16-11-11-22.png" alt></p>
+<h3 id="SPD（谱功率密度）"><a href="#SPD（谱功率密度）" class="headerlink" title="SPD（谱功率密度）"></a>SPD（谱功率密度）</h3><p>我们可以通过SPD来描述任何一个光在对应波长的分布是多少。eg:</p>
+<p><img src="/images/2023-09-16-11-12-50.png" alt></p>
+<p>阳光的分布主要在700附近，蓝天则在500左右。</p>
+<p>SPD的线性性质：</p>
+<p><img src="/images/2023-09-16-11-14-14.png" alt></p>
+<p>假设有一个物体，用两个不同的光来照射他，其SPD结果就是两个光照SPD的和。</p>
+<p>所以颜色到底是什么？颜色是人类的感知，与人有关，和实际光的分布没有过大的关系。</p>
+<p><img src="/images/2023-09-16-11-16-14.png" alt></p>
+<p>瞳孔就是光圈、晶状体就是透镜、视网膜就是感光元件。人眼就是一个相机。视网膜上有感光细胞：</p>
+<p><img src="/images/2023-09-16-11-17-38.png" alt></p>
+<p>感光细胞分两种：一种是视杆细胞（用于感知光强，其结果是灰度图），一种是视锥细胞（数量少一些，可以用来感知颜色）。我们研究颜色就需要研究视锥细胞，视锥细胞内部又分为三类，分为S、M、L三类细胞。三种细胞对三种类型的波长响应各不相同:</p>
+<p><img src="/images/2023-09-16-11-19-57.png" alt></p>
+<p>并且其数量分布也不同:</p>
+<p><img src="/images/2023-09-16-11-21-34.png" alt></p>
+<p>其分布数量因人而异，所以每个人看到的同样光线都是不同的。</p>
+<p>结论就是，我们人类看到的不是颜色，而是S、M、L三个数积分出来的结果。</p>
+<h3 id="同色异谱"><a href="#同色异谱" class="headerlink" title="同色异谱"></a>同色异谱</h3><p>我们描述一种颜色可以用不同的SPD来进行描述：</p>
+<p><img src="/images/2023-09-16-11-27-20.png" alt></p>
+<p>这就是同色异谱。这样给定我们一个颜色，我们可以用户不同的颜色去描述它。我们常用的方法是RGB来进行混合（红绿蓝三种眼色来混合）。</p>
+<p><img src="/images/2023-09-16-11-28-36.png" alt></p>
+<p>颜色要如何去混合呢？</p>
+<p><img src="/images/2023-09-16-11-39-01.png" alt></p>
+<p>通过两种夜色的对比，调解RGB的光强，然后直到颜色和目标颜色相似为止。</p>
+<p><strong>色彩空间：不同的颜色定义方式。</strong></p>
+<p><strong>色域：通过不同的定义方式（不同颜色空间）所有能够表示的颜色。如rgb、xyz等方法定义出的所有的颜色。</strong></p>
+<p>一些颜色空间：RGB、XYZ、HSV（色调（具体颜色）、饱和度（是否接近白色）、亮度（是否接近黑色））、LAB（三对轴，每一个轴上是一对互补色，黑白、黄蓝、绿红）、CMYK（蓝绿、品红、黄色、黑色，通过这几种颜色的混合可以获得不同的颜色，所有颜色混合结果是黑色）。</p>
+<h1 id="第二十一课"><a href="#第二十一课" class="headerlink" title="第二十一课"></a>第二十一课</h1><h2 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h2><p>有了物体之后，我们要开始关心一下怎么让场景中的物体动起来了。</p>
+<h3 id="计算机动画"><a href="#计算机动画" class="headerlink" title="计算机动画"></a>计算机动画</h3><p>让物体变成活的，早期动画是连续的绘制的图片播放。在图形学中，我们可以将其作为几何的拓展。一般来说，电影在24帧左右、电视在30帧左右、虚拟现实眼镜在90帧左右。</p>
+<h3 id="关键帧动画"><a href="#关键帧动画" class="headerlink" title="关键帧动画"></a>关键帧动画</h3><p>优秀的艺术家绘制关键帧，然后其助手负责补足中间的帧：</p>
+<p><img src="/images/2023-09-17-16-10-54.png" alt></p>
+<p>几种插值的方法：</p>
+<ol>
+<li>线性插值：<br><img src="/images/2023-09-17-16-13-20.png" alt></li>
+<li>平滑：<br><img src="/images/2023-09-17-16-24-21.png" alt></li>
+</ol>
+<h3 id="物理模拟"><a href="#物理模拟" class="headerlink" title="物理模拟"></a>物理模拟</h3><p>最简单的物理模拟：</p>
+<p>F = ma</p>
+<p>通过牛顿定律来计算物体的位置或者形状的变化。</p>
+<p>eg：<br><img src="/images/2023-09-17-16-26-11.png" alt></p>
+<p>抛物线的实现。</p>
+<p>同时还有衣物、流体等的模拟。只需要建立正确的物理模型，通过解方程就可以获得具体的物理效果了。</p>
+<h4 id="经典的物理模拟系统：质点弹簧系统"><a href="#经典的物理模拟系统：质点弹簧系统" class="headerlink" title="经典的物理模拟系统：质点弹簧系统"></a>经典的物理模拟系统：质点弹簧系统</h4><p>应用：弹簧绳、头发、布料。</p>
+<p>原理说明：<br>一个弹簧左右连接两个质点（理想弹簧没有长度，拉开多长具有多大的力）。</p>
+<p><img src="/images/2023-09-17-16-34-30.png" alt></p>
+<p>b-a是一个向量结果，我们由此可以通过一个劲度系数Ks来求出a到b方向的力。方向相反为a-b。</p>
+<p>但是一般来说弹簧是有长度的。我们分析的时候只需要考虑长度就可以了，具体来说就是在上述公式的基础上求出变化的长度，例如我们有一个初始长度l，ab之间的距离为b-a，则有下述公式：</p>
+<p><img src="/images/2023-09-17-16-47-28.png" alt></p>
+<p>也就是方向归一化之后通过减去初始长度来判断实际变化的长度，从而算出收到的弹力。</p>
+<p>提一嘴：一般来说x’为速度，x’’为加速度（距离的求导和二阶导）。然后我们来考虑弹簧内部的摩擦力：</p>
+<p><img src="/images/2023-09-17-16-56-55.png" alt></p>
+<p>fb收到的阻尼力可以通过b的速度-a的速度点乘b到a的方向，这样我们可以获得相对速度到ba方向上的投影大小。但是我们考虑到一些运动是不会造成内部摩擦力的（例如圆周运动），所以获得投影大小后和判断在ba方向上的影响力（比如圆周的情况，90度则为0了）。（这里公式没有考虑初始长度）。</p>
+<p>有了一个弹簧的分析思路后，我们可以将其用来模拟布料等效果：</p>
+<p><img src="/images/2023-09-17-17-03-14.png" alt></p>
+<p>但是其中也有不合理的地方，例如我们拉扯对角线，这样会导致布变为一条线。</p>
+<p>但是我们可以通过更改内部结构来实现具体效果：</p>
+<p><img src="/images/2023-09-17-17-05-51.png" alt></p>
+<p>这样再对对应的对角线进行拉取不会造成上述问题了（因为内部弹簧的力将其抵消了）。于是我们将两个方向都添加弹簧：</p>
+<p><img src="/images/2023-09-17-17-07-00.png" alt></p>
+<p>但是就算经过这些处理还是会有一些问题，例如我们将布料对折，内部弹簧是不会受到力的。这不符合布料的性质，于是我们可以进行如下弹簧的添加操作：</p>
+<p><img src="/images/2023-09-17-17-08-34.png" alt></p>
+<p>经过这种方式，我们可以使布料折叠时产生想对应的弹力了。</p>
+<p>其他的布料模拟方法：FEM（有限元分析法），模拟了力之间的传导作用，这个传导过程是一个扩散的过程。这个过程的模拟可以考虑使用FEM方法，虽然难写，但是是从另一个角度来进行建模。</p>
+<h4 id="经典的物理模拟系统：粒子系统"><a href="#经典的物理模拟系统：粒子系统" class="headerlink" title="经典的物理模拟系统：粒子系统"></a>经典的物理模拟系统：粒子系统</h4><p><img src="/images/2023-09-17-17-12-27.png" alt></p>
+<p>我们将物体一个一个的建模出来，然后通过一些统一的方式对这些粒子进行控制。粒子系统的应用：流体模拟（离散化连续空间中的流体进行模拟）、头发、动物群（ODE）、分子运动模拟、人群模拟。</p>
+<p>可以参考本博客的SPH相关文章。</p>
+<p>注：模拟只模拟物体的位置、力等物理信息。渲染不参与这个过程。</p>
+<h3 id="运动学"><a href="#运动学" class="headerlink" title="运动学"></a>运动学</h3><p>图形学中，运动学分为两个方面：正运动学和逆运动学。骨骼系统的实现一般会较多的应用到运动学。</p>
+<h4 id="正向运动学："><a href="#正向运动学：" class="headerlink" title="正向运动学："></a>正向运动学：</h4><p><img src="/images/2023-09-17-17-33-42.png" alt></p>
+<p>通过一个确定的物体的起始点，逐步确定与其连接的关节，就可以求出物体实际的定位。</p>
+<h4 id="逆运动学"><a href="#逆运动学" class="headerlink" title="逆运动学"></a>逆运动学</h4><p>正向运动学实现容易，但是有一些不好的地方，大多数人是不考虑具体实现的，使用骨骼时是直接拖动目标位置来进行设计的。所以我们可以考虑逆运动学：</p>
+<p><img src="/images/2023-09-17-17-35-42.png" alt></p>
+<p>我们知道起始点，但是我们输入的数据是非起始点的节点位置，我们需要反向求其剩余结果。逆运动学有一个不好的地方就是结果不唯一，难以求出具体的结果。</p>
+<h3 id="Rigging（对于某种形状的控制）"><a href="#Rigging（对于某种形状的控制）" class="headerlink" title="Rigging（对于某种形状的控制）"></a>Rigging（对于某种形状的控制）</h3><p>蒙皮效果，就是让我们的网格模型能够合适的进行控制（尤其是人物一类的模型）。</p>
+<h3 id="Montion-Capture"><a href="#Montion-Capture" class="headerlink" title="Montion Capture"></a>Montion Capture</h3><p>动作捕捉，我们希望真实的人物的动作映射到模型上，我们就可以使用动作捕捉：</p>
+<p><img src="/images/2023-09-17-17-45-02.png" alt></p>
+<p>卡普空的街霸6中就使用了很多动捕。</p>
+<p>但是动捕也有很多问题：准备阶段复杂、相对写实难以实现卡通动作效果、捕捉条件有限制时难以捕捉到所有数据（高成本下可以有一定程度的解决）。</p>
+<p>目前运用最广泛的动作捕捉方法是光学上的方法。</p>
+<p><img src="/images/2023-09-17-17-48-31.png" alt></p>
+<h2 id="整个CG动画、电影的实现过程："><a href="#整个CG动画、电影的实现过程：" class="headerlink" title="整个CG动画、电影的实现过程："></a>整个CG动画、电影的实现过程：</h2><p><img src="/images/2023-09-17-17-52-10.png" alt></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/games101%E7%AC%94%E8%AE%B0/" rel="tag"># games101笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/08/games101%E7%AC%94%E8%AE%B016-18/" rel="prev" title="games101笔记16-18">
+      <i class="fa fa-chevron-left"></i> games101笔记16-18
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/16/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%AD%A6%E4%B9%A0/" rel="next" title="设计模式学习">
+      设计模式学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B9%9D%E8%AF%BE"><span class="nav-number">1.</span> <span class="nav-text">第十九课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E6%9C%BA%E7%9A%84%E6%88%90%E5%83%8F%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">相机的成像原理：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FOV"><span class="nav-number">1.1.1.</span> <span class="nav-text">FOV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exposure"><span class="nav-number">1.1.2.</span> <span class="nav-text">Exposure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%B1%E5%93%8D%E7%85%A7%E7%89%87%E4%BA%AE%E5%BA%A6%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.1.3.</span> <span class="nav-text">影响照片亮度的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ISO"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">ISO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%89%E5%9C%88"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">光圈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%AB%E9%97%A8"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">快门</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%8F%82%E6%95%B0%E7%9A%84%E5%90%8C%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%EF%BC%9A"><span class="nav-number">1.1.4.</span> <span class="nav-text">不同参数的同效果实现：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E9%80%9F%E6%91%84%E5%BD%B1"><span class="nav-number">1.1.5.</span> <span class="nav-text">高速摄影</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E4%BD%8E%E9%80%9F%E6%91%84%E5%BD%B1%EF%BC%9A"><span class="nav-number">1.1.6.</span> <span class="nav-text">超低速摄影：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%B1%E9%95%9C"><span class="nav-number">1.1.7.</span> <span class="nav-text">棱镜</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E8%96%84%E9%80%8F%E9%95%9C%E7%9A%84%E6%B8%B2%E6%9F%93%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">1.1.8.</span> <span class="nav-text">模拟薄透镜的渲染方式：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E8%AF%BE"><span class="nav-number">2.</span> <span class="nav-text">第二十课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%89%E5%9C%BA"><span class="nav-number">2.1.</span> <span class="nav-text">光场</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%85%89%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.1.</span> <span class="nav-text">全光函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%85%89%E5%9C%BA"><span class="nav-number">2.1.2.</span> <span class="nav-text">定义光场</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%9C%E8%89%B2"><span class="nav-number">2.2.</span> <span class="nav-text">颜色</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SPD%EF%BC%88%E8%B0%B1%E5%8A%9F%E7%8E%87%E5%AF%86%E5%BA%A6%EF%BC%89"><span class="nav-number">2.2.1.</span> <span class="nav-text">SPD（谱功率密度）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E8%89%B2%E5%BC%82%E8%B0%B1"><span class="nav-number">2.2.2.</span> <span class="nav-text">同色异谱</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E5%8D%81%E4%B8%80%E8%AF%BE"><span class="nav-number">3.</span> <span class="nav-text">第二十一课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E7%94%BB"><span class="nav-number">3.1.</span> <span class="nav-text">动画</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8A%A8%E7%94%BB"><span class="nav-number">3.1.1.</span> <span class="nav-text">计算机动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%B8%A7%E5%8A%A8%E7%94%BB"><span class="nav-number">3.1.2.</span> <span class="nav-text">关键帧动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E6%A8%A1%E6%8B%9F"><span class="nav-number">3.1.3.</span> <span class="nav-text">物理模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E7%9A%84%E7%89%A9%E7%90%86%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%EF%BC%9A%E8%B4%A8%E7%82%B9%E5%BC%B9%E7%B0%A7%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.1.3.1.</span> <span class="nav-text">经典的物理模拟系统：质点弹簧系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E7%9A%84%E7%89%A9%E7%90%86%E6%A8%A1%E6%8B%9F%E7%B3%BB%E7%BB%9F%EF%BC%9A%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.1.3.2.</span> <span class="nav-text">经典的物理模拟系统：粒子系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E5%8A%A8%E5%AD%A6"><span class="nav-number">3.1.4.</span> <span class="nav-text">运动学</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E5%90%91%E8%BF%90%E5%8A%A8%E5%AD%A6%EF%BC%9A"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">正向运动学：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%86%E8%BF%90%E5%8A%A8%E5%AD%A6"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">逆运动学</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rigging%EF%BC%88%E5%AF%B9%E4%BA%8E%E6%9F%90%E7%A7%8D%E5%BD%A2%E7%8A%B6%E7%9A%84%E6%8E%A7%E5%88%B6%EF%BC%89"><span class="nav-number">3.1.5.</span> <span class="nav-text">Rigging（对于某种形状的控制）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Montion-Capture"><span class="nav-number">3.1.6.</span> <span class="nav-text">Montion Capture</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%B8%AACG%E5%8A%A8%E7%94%BB%E3%80%81%E7%94%B5%E5%BD%B1%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">3.2.</span> <span class="nav-text">整个CG动画、电影的实现过程：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

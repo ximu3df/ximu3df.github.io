@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="SPH法学习记录参考文章：https:&#x2F;&#x2F;www.thecodeway.com&#x2F;?p&#x3D;83 简介：SPH（smoothed-particle hydrodynamics）光滑粒子流体动力学，是一种用于模拟连续介质动力学的计算方法，如固体力学和流体流动。 它由Gingold和Monaghan（1977）和Lucy（1977）提出，最初用于天体物理问题。 此方法已被用于许多研究领域，包括天体物理学，弹">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SPH法学习">
+<meta property="og:url" content="http://ximu3df.github.io/2023/05/21/SPH%E6%B3%95%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="SPH法学习记录参考文章：https:&#x2F;&#x2F;www.thecodeway.com&#x2F;?p&#x3D;83 简介：SPH（smoothed-particle hydrodynamics）光滑粒子流体动力学，是一种用于模拟连续介质动力学的计算方法，如固体力学和流体流动。 它由Gingold和Monaghan（1977）和Lucy（1977）提出，最初用于天体物理问题。 此方法已被用于许多研究领域，包括天体物理学，弹">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ximu3df.github.io/images/image.png.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-00-54.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-02-54.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-04-18.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-31-08.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-31-43.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-32-06.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-38-23.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-43-38.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-43-59.png">
+<meta property="og:image" content="http://ximu3df.github.io/images/2023-05-23-12-44-21.png">
+<meta property="article:published_time" content="2023-05-21T08:33:03.000Z">
+<meta property="article:modified_time" content="2023-08-31T14:44:16.854Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="3d动画算法学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ximu3df.github.io/images/image.png.png">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/05/21/SPH%E6%B3%95%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SPH法学习 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/05/21/SPH%E6%B3%95%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SPH法学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-05-21 16:33:03" itemprop="dateCreated datePublished" datetime="2023-05-21T16:33:03+08:00">2023-05-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-08-31 22:44:16" itemprop="dateModified" datetime="2023-08-31T22:44:16+08:00">2023-08-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="SPH法学习记录"><a href="#SPH法学习记录" class="headerlink" title="SPH法学习记录"></a>SPH法学习记录</h1><p>参考文章：<a target="_blank" rel="noopener" href="https://www.thecodeway.com/?p=83">https://www.thecodeway.com/?p=83</a></p>
+<h2 id="简介："><a href="#简介：" class="headerlink" title="简介："></a>简介：</h2><p>SPH（smoothed-particle hydrodynamics）光滑粒子流体动力学，是一种用于模拟连续介质动力学的计算方法，如固体力学和流体流动。 它由Gingold和Monaghan（1977）和Lucy（1977）提出，最初用于天体物理问题。 此方法已被用于许多研究领域，包括天体物理学，弹道学，火山学和海洋学。 它是一种无网格的拉格朗日方法（即坐标系与流体一起移动），并且方法的分辨率可以容易地相对于诸如密度的变量进行调整。（来源于维基百科）</p>
+<p>其特点是使用拉格朗日视角来对流动物进行观察，也就是对流动的东西建立坐标系，而不是如欧拉视角一般直接建立一个世界坐标系，这样做的好处是可以更加快速的对我们抽象离散化的流体粒子进行处理，而不需要过多的坐标转换。</p>
+<h2 id="数学基础："><a href="#数学基础：" class="headerlink" title="数学基础："></a>数学基础：</h2><ol>
+<li><p>标量场</p>
+<p>如果空间中每一个位置都可以用一个属性（标量）来表示，那么这样的空间就是标量场。</p>
+</li>
+<li><p>矢量场</p>
+<p>如果空间中每一个位置都可以用一个向量来表示，那么这样的空间就是矢量场。</p>
+</li>
+<li><p>偏导数：</p>
+<p>多元函数Z = f（X，Y）表示的是一个三维的曲面，对x偏导就是该曲面在x轴上的变化率，对y偏导这是在y轴上的变化率。对应到物理上就是一个物理系统里，某一参数的变化，引起的物理量（函数）的变化。</p>
+</li>
+<li><p>哈密顿算子：</p>
+<p>∇（哈密顿算子），是流体力学中十分重要的一环。∇的定义如下：</p>
+<script type="math/tex; mode=display">
+∇ = \frac{d}{dr}</script><p>多维形式的表示为：</p>
+<script type="math/tex; mode=display">
+∇ = \frac{d}{dx}\vec{x} + \frac{d}{dy}\vec{y}+\frac{d}{dz}\vec{z}</script><p>该算子的作用为：<br>直接作用于函数（无论是标量还是矢量）是用于求取该函数的梯度，如果其参数是三维向量则表示求取旋度，如果为二维向量则是求取散度。</p>
+</li>
+<li><p>拉普拉辛算子：</p>
+<p>二阶微分算子</p>
+<script type="math/tex; mode=display">
+∇^2A = \frac{d^2}{dx^2}\vec{x} + \frac{d^2}{dy^2}\vec{y}+\frac{d^2}{dz^2}\vec{z}
+ \\
+其中A为：A = f(x,y,z)</script><p>拉普拉辛算子的物理意义是一个场变量的梯度的散度，向量场中经过哈密顿算子的计算之后可以获得</p>
+</li>
+</ol>
+<h2 id="粒子受力分析："><a href="#粒子受力分析：" class="headerlink" title="粒子受力分析："></a>粒子受力分析：</h2><p> SPH算法的基本设想，就是将连续的流体想象成一个个相互作用的微粒，这些例子相互影响，共同形成了复杂的流体运动，对于每个单独的流体微粒，依旧遵循最基本的牛顿第二定律。</p>
+<script type="math/tex; mode=display">F = ma</script><p> 在流体中，质量由流体单元密度决定</p>
+<script type="math/tex; mode=display">F = ρa</script><pre><code>这里用密度代替了质量，由于使用了密度代替了质量，所以力的量纲转换为：
+</code></pre><script type="math/tex; mode=display">F = ML^{-2}T^{-2}</script><p>之后我们来判断每一个粒子中所受到的力：</p>
+<script type="math/tex; mode=display">F^{合外力} = F^{外部作用力}+F^{内部压力差}+F^{内部速度差}</script><p>外部作用力一般指的是重力：</p>
+<script type="math/tex; mode=display">F = ρg</script><p>内部压力差一般是指流体内部由于压力所造成的力，该值为压力场中的梯度，方向为压力高的方向指向方向低的方向。由于∇乘上一个向量场可以表示其梯度，所以公式为：</p>
+<script type="math/tex; mode=display">F = -∇p</script><p>内部速度差是由粒子间的速度差引起的，快的粒子会阻隔慢的粒子，这个部分是由于粘滞系数μ所影响的：</p>
+<script type="math/tex; mode=display">F = μ∇^2u</script><p>将上述的公式带入可以获得如下结果：</p>
+<script type="math/tex; mode=display">\vec{a} = \vec{g} - \frac{∇p}{ρ} + \frac{μ∇^2\vec{u}}{ρ}</script><h2 id="光滑核函数"><a href="#光滑核函数" class="headerlink" title="光滑核函数"></a>光滑核函数</h2><p>SPH函数中的光滑核概念：</p>
+<p>粒子的力会扩散影响到周围粒子，并且会随着距离的增大而减小。</p>
+<p>这种随着距离而衰减的函数被称为“光滑核”函数，最大影响半径为“光滑核半径”。</p>
+<p>假设在流体中某个点：</p>
+<script type="math/tex; mode=display">\vec{r}</script><p>其周围有数个粒子：</p>
+<script type="math/tex; mode=display">\vec{r_1} \vec{r_2} \vec{r_3} \vec{r_4}……\vec{r_j}</script><p>则这个位置的累加属性为：<br><img src="/images/image.png.png" alt></p>
+<p>其中A是某一种要累加的属性，m和ρ是质量和密度，r是粒子的位置，h光滑核的半径，W就是光滑核函数。</p>
+<p>光滑核函数有两个重要的属性分别为：</p>
+<p>偶函数和规整函数（积分为1）</p>
+<h3 id="SPH的推导过程："><a href="#SPH的推导过程：" class="headerlink" title="SPH的推导过程："></a>SPH的推导过程：</h3><p>跟具上述的受力分析，我们可以得到某个位置的加速度为：</p>
+<script type="math/tex; mode=display">a(\vec{r}) = \vec{g} -\frac{∇p(r_i)}{ρ(r_i)} + \frac{μ∇^2\vec{u}(r_i)}{ρ(r_i)}</script><p> 对于SPH算法来说，基本流程就是这样，根据光滑核函数逐个推出流体中某点的密度，压力，速度相关的累加函数，进而推导出此处的加速度，从而模拟流体的运动趋势.</p>
+<p> 在此之前，首先要说明一下什么是光滑核函数:</p>
+<p> <strong>光滑核函数可以被理解为一种在一定光滑长度h范围内其他临近粒子对研究粒子影响程度的权函数</strong></p>
+<p> <strong>密度的推导</strong></p>
+<p> 用密度ρ代替A，可以得到:</p>
+<script type="math/tex; mode=display">ρ(r_i) = \sum ρ_j\frac{m_j}{ρ_j}W(\vec{r_i}-\vec{r_j},h)
+
+ =\sum m_jW(\vec{r_i}-\vec{r_j},h)</script><p> 其中的W函数则使用poly6光滑核来实现：</p>
+<p> <img src="/images/2023-05-23-12-00-54.png" alt></p>
+<p> 其中三维空间下的K是由下述公式所得：</p>
+<p> <img src="/images/2023-05-23-12-02-54.png" alt></p>
+<p> 带入上述公式后，可以得到密度公式为：</p>
+<p> <img src="/images/2023-05-23-12-04-18.png" alt></p>
+<p> <strong>压力的推导</strong></p>
+<p>用压力来代替A可以获得以下公式</p>
+<script type="math/tex; mode=display">F_i = -\sum p_j\frac{m_j}{ρ_j}∇W(\vec{r_i}-\vec{r_j},h)</script><p>但是由于两个不同位置的粒子所收到的压强是不相等的，所以这里使用平均值来计算压强：</p>
+<script type="math/tex; mode=display">F_i = -\sum (p_j+p_i)\frac{m_j}{2ρ_j}∇W(\vec{r_i}-\vec{r_j},h)</script><p>同时此处的W也要选择一个核函数来进行计算，这里使用的是Spiky函数：</p>
+<p><img src="/images/2023-05-23-12-31-08.png" alt></p>
+<p>在三维情况下的k为：<br><img src="/images/2023-05-23-12-31-43.png" alt></p>
+<p>带入上述式子有：</p>
+<p><img src="/images/2023-05-23-12-32-06.png" alt></p>
+<p><strong>粘度的推导</strong><br>把粘相关力替换A有：</p>
+<script type="math/tex; mode=display">F_i = μ\sum u_j\frac{m_j}{ρ_j}∇^2W(\vec{r_i}-\vec{r_j},h)</script><p>同压力，这里也有不平衡问题，为了解决这个问题，我们要使用相对速度来求解：</p>
+<script type="math/tex; mode=display">F_i = μ\sum (u_j-u_i)\frac{m_j}{ρ_j}∇^2W(\vec{r_i}-\vec{r_j},h)</script><p>此处我们使用的光滑核函数如下：</p>
+<p><img src="/images/2023-05-23-12-38-23.png" alt></p>
+<p>三维情况下的k为：</p>
+<p><img src="/images/2023-05-23-12-43-38.png" alt></p>
+<p>带入公式后：</p>
+<p><img src="/images/2023-05-23-12-43-59.png" alt></p>
+<p><strong>将三个部分带入原来的公式</strong>：</p>
+<p><img src="/images/2023-05-23-12-44-21.png" alt></p>
+<h2 id="自己的实现思路"><a href="#自己的实现思路" class="headerlink" title="自己的实现思路"></a>自己的实现思路</h2><p>上述内容为理论基础。现在将尝试实现。</p>
+<p>首先考虑用于实现的工具，这里尝试使用unity来进行实现。但是粒子运算需要大量的算力，所以这里将考虑使用unity提供的GPU计算着色器，compute shader。</p>
+<p>之后会更新以下compute shder的学习过程和SPH的实现过程的文章。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/3d%E5%8A%A8%E7%94%BB%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" rel="tag"># 3d动画算法学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/05/18/games106%E7%AC%94%E8%AE%B01-3/" rel="prev" title="games106笔记1-3">
+      <i class="fa fa-chevron-left"></i> games106笔记1-3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/06/25/SPH%E5%86%8D%E6%B7%B1%E5%85%A5%E4%BB%A5%E5%8F%8AunityComputeShader%E5%AD%A6%E4%B9%A0/" rel="next" title="SPH再深入以及unityComputeShader学习">
+      SPH再深入以及unityComputeShader学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SPH%E6%B3%95%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">SPH法学习记录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">简介：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">数学基础：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%92%E5%AD%90%E5%8F%97%E5%8A%9B%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">粒子受力分析：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%89%E6%BB%91%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">光滑核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SPH%E7%9A%84%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">1.4.1.</span> <span class="nav-text">SPH的推导过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="nav-number">1.5.</span> <span class="nav-text">自己的实现思路</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
