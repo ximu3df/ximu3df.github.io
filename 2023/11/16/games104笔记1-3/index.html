@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ximu3df.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第一课游戏引擎的定义：构建黑客帝国的底层框架。 游戏引擎不仅仅是渲染，还有更多。 一些游戏引擎的关键点：实时渲染、创作工具（面对各行各业的需求者）、开发平台（面对游戏开发者，尤其是程序员）、工作流（整体框架设计）。 课程目的：建立现代游戏引擎设计的知识体系框架。 课程内容：  游戏引擎的层次结构 渲染（各种算法的组成方式与结构） 动画 物理 gameplay系统 特效系统 工具系统 网络 线程同步">
+<meta property="og:type" content="article">
+<meta property="og:title" content="games104笔记1-3">
+<meta property="og:url" content="http://ximu3df.github.io/2023/11/16/games104%E7%AC%94%E8%AE%B01-3/index.html">
+<meta property="og:site_name" content="Ximu&#39;s Blog">
+<meta property="og:description" content="第一课游戏引擎的定义：构建黑客帝国的底层框架。 游戏引擎不仅仅是渲染，还有更多。 一些游戏引擎的关键点：实时渲染、创作工具（面对各行各业的需求者）、开发平台（面对游戏开发者，尤其是程序员）、工作流（整体框架设计）。 课程目的：建立现代游戏引擎设计的知识体系框架。 课程内容：  游戏引擎的层次结构 渲染（各种算法的组成方式与结构） 动画 物理 gameplay系统 特效系统 工具系统 网络 线程同步">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-16T02:24:52.000Z">
+<meta property="article:modified_time" content="2023-11-16T10:18:47.404Z">
+<meta property="article:author" content="Ximu">
+<meta property="article:tag" content="games104笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://ximu3df.github.io/2023/11/16/games104%E7%AC%94%E8%AE%B01-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>games104笔记1-3 | Ximu's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Ximu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/11/16/games104%E7%AC%94%E8%AE%B01-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          games104笔记1-3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-16 10:24:52 / 修改时间：18:18:47" itemprop="dateCreated datePublished" datetime="2023-11-16T10:24:52+08:00">2023-11-16</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第一课"><a href="#第一课" class="headerlink" title="第一课"></a>第一课</h1><p>游戏引擎的定义：构建黑客帝国的底层框架。</p>
+<p>游戏引擎不仅仅是渲染，还有更多。</p>
+<p>一些游戏引擎的关键点：实时渲染、创作工具（面对各行各业的需求者）、开发平台（面对游戏开发者，尤其是程序员）、工作流（整体框架设计）。</p>
+<p>课程目的：建立现代游戏引擎设计的知识体系框架。</p>
+<p>课程内容：</p>
+<ol>
+<li>游戏引擎的层次结构</li>
+<li>渲染（各种算法的组成方式与结构）</li>
+<li>动画</li>
+<li>物理</li>
+<li>gameplay系统</li>
+<li>特效系统</li>
+<li>工具系统</li>
+<li>网络</li>
+<li>线程同步</li>
+<li>前沿技术</li>
+</ol>
+<h1 id="第二课"><a href="#第二课" class="headerlink" title="第二课"></a>第二课</h1><h2 id="游戏引擎的层次"><a href="#游戏引擎的层次" class="headerlink" title="游戏引擎的层次"></a>游戏引擎的层次</h2><ol>
+<li>工具层：用户可以直接看到、直接操作的部分。</li>
+<li>功能层：画面渲染、场景运动等。</li>
+<li>资源层：游戏中用于工作的资源。</li>
+<li>核心层：支持引擎的各种工作。</li>
+<li>平台层：处理各种平台的工作。</li>
+</ol>
+<h2 id="挑战：用引擎的层次创建一个会动的小人"><a href="#挑战：用引擎的层次创建一个会动的小人" class="headerlink" title="挑战：用引擎的层次创建一个会动的小人"></a>挑战：用引擎的层次创建一个会动的小人</h2><ol>
+<li>资源的导入：<br>由于我们常用的文件有很多格式如fbx、glb等。如果在引擎中使用各种格式的文件的话，会徒增非常多的工作量。所以我们在导入文件的时候会进行一次转化，将之转化为高效的引擎资源。从而便于用户操作，并提高性能。存入的资产有很多类型，并且在引擎中会被多次使用，且资源之间有很多关联，所以我们会用一个GUID来标记资源，便于资源管理。</li>
+<li>资源层的工作：<br> 管理所有的资源。</li>
+<li>功能层的工作：<br> 通过ticks来实现每一帧的工作。一般来说ticks分为逻辑和渲染两个部分。逻辑部分实现物理、游戏逻辑等工作，而渲染部分则负责画面效果的绘制。</li>
+<li>核心层的工作：<br>为各种数学运算提供支持、为上层提供可操作的数据结构、内存分配管理（为了更高的效率）。质量要求最高的一层。</li>
+<li>平台层：将各个平台使用的不同的api进行封装，使得引擎可以在不同平台进行工作。</li>
+<li>工具层：提供GUI来让用户来进行编辑（包括：逻辑、动画、场景、资源等）。</li>
+</ol>
+<h2 id="为什么引擎要分层："><a href="#为什么引擎要分层：" class="headerlink" title="为什么引擎要分层："></a>为什么引擎要分层：</h2><p><strong>为了降低复杂度：</strong><br><strong>每一层负责每一层的工作，封装各个部分后可以让人不需要在意底层的工作内容。</strong></p>
+<p>同时越是底层的东西越不要去更改他，分层结构的特点就是越往上越灵活，越往下越稳定。在做任何事的时候都需要考虑这部分工作处于哪一层。同时底层不允许去调用上层的api。（最重要的思想）</p>
+<p>课程引擎在哪找？等我去找找。PILOT。</p>
+<p>找到了：<br><a target="_blank" rel="noopener" href="https://github.com/BoomingTech/Piccolo">https://github.com/BoomingTech/Piccolo</a></p>
+<h1 id="第三课"><a href="#第三课" class="headerlink" title="第三课"></a>第三课</h1><h2 id="gameplay中的各个组成元素"><a href="#gameplay中的各个组成元素" class="headerlink" title="gameplay中的各个组成元素"></a>gameplay中的各个组成元素</h2><ol>
+<li>动态物</li>
+<li>静态物</li>
+<li>地形系统</li>
+<li>天空</li>
+<li>其他</li>
+</ol>
+<h3 id="游戏对象："><a href="#游戏对象：" class="headerlink" title="游戏对象："></a>游戏对象：</h3><p>上述元素，在引擎中，我们会将他们抽象为game object。通过Game Object，我们就可以制作游戏了。</p>
+<p>一般来说，一个Game Object只需要属性和行为，便可以用来描述所有东西。落实到各个物体中，我们便可以将其抽象成一个类对象。</p>
+
+<p>上图无人机类的设计中，我们可以考虑使用继承的思路来进行game object的设计。但是这种方法虽然简单易懂，但是随着我们的物体越来越多，物体间的关系却越来越模糊（水陆两栖坦克到底继承自坦克还是船呢？）如何解决这种问题？现代引擎使用的思路是使用组件的方式来进行设计。</p>
+
+<p>将各个功能对应到对应的组件，每个game object则是由组件组成的。例如一个无人机由位置、机身、机翅、摄像头等组件组成。</p>
+<h2 id="运动"><a href="#运动" class="headerlink" title="运动:"></a>运动:</h2><p>有了游戏对象，我们可以设置好游戏的场景和游戏对象。但是如何让他们动起来呢？每一帧让每一个game object来进行他们的工作。只要帧数足够高，场景便运动了起来。但是顺序工作的工作效率是非常低的。为了达到更高的效率，tick系统中，我们会通过流水线的方式来进行优化。</p>
+<h2 id="交互："><a href="#交互：" class="headerlink" title="交互："></a>交互：</h2><ol>
+<li>Hardcode：做线性遍历，进行判断。</li>
+<li>Events：给目标物体添加event，让其在其tick中进行处理</li>
+</ol>
+<p>两者的区别在于events进行了解耦合，变得简单且干净（嗯呗）。</p>
+<h2 id="管理物体"><a href="#管理物体" class="headerlink" title="管理物体:"></a>管理物体:</h2><p>每个game object中会设置对应的id（区别于资源的GUID）。</p>
+<h3 id="管理方式"><a href="#管理方式" class="headerlink" title="管理方式"></a>管理方式</h3><ol>
+<li>不管理：对所有物体进行位置的判断。</li>
+<li>空间划分：哈希和八叉树以及其他的分割方式。</li>
+</ol>
+<h2 id="物体间的绑定和事件系统"><a href="#物体间的绑定和事件系统" class="headerlink" title="物体间的绑定和事件系统"></a>物体间的绑定和事件系统</h2><p>物体间是有父子关系的。那么在tick中，我们tick时的操作顺序是什么样的呢？一般是由父物体到子物体。</p>
+<p>事件系统我们在上面已经描述过了，这里说一个事件消息系统的问题：产生消息后，物体的执行时机。具体的执行顺序受到很多东西的影响：软件上算法的实现比如是在受到消息后立即执行还是延迟到下一个tick执行；硬件也会影响，比如有多线程的计算设备通过多线程的方式计算会获得不确定的结果等。消息系统的设计也是非常重要的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/games104%E7%AC%94%E8%AE%B0/" rel="tag"># games104笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/07/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A003/" rel="prev" title="算法学习03">
+      <i class="fa fa-chevron-left"></i> 算法学习03
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%AF%BE"><span class="nav-number">1.</span> <span class="nav-text">第一课</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%AF%BE"><span class="nav-number">2.</span> <span class="nav-text">第二课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E%E7%9A%84%E5%B1%82%E6%AC%A1"><span class="nav-number">2.1.</span> <span class="nav-text">游戏引擎的层次</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%91%E6%88%98%EF%BC%9A%E7%94%A8%E5%BC%95%E6%93%8E%E7%9A%84%E5%B1%82%E6%AC%A1%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E4%BC%9A%E5%8A%A8%E7%9A%84%E5%B0%8F%E4%BA%BA"><span class="nav-number">2.2.</span> <span class="nav-text">挑战：用引擎的层次创建一个会动的小人</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BC%95%E6%93%8E%E8%A6%81%E5%88%86%E5%B1%82%EF%BC%9A"><span class="nav-number">2.3.</span> <span class="nav-text">为什么引擎要分层：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E8%AF%BE"><span class="nav-number">3.</span> <span class="nav-text">第三课</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#gameplay%E4%B8%AD%E7%9A%84%E5%90%84%E4%B8%AA%E7%BB%84%E6%88%90%E5%85%83%E7%B4%A0"><span class="nav-number">3.1.</span> <span class="nav-text">gameplay中的各个组成元素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B8%E6%88%8F%E5%AF%B9%E8%B1%A1%EF%BC%9A"><span class="nav-number">3.1.1.</span> <span class="nav-text">游戏对象：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E5%8A%A8"><span class="nav-number">3.2.</span> <span class="nav-text">运动:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%EF%BC%9A"><span class="nav-number">3.3.</span> <span class="nav-text">交互：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%89%A9%E4%BD%93"><span class="nav-number">3.4.</span> <span class="nav-text">管理物体:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E6%96%B9%E5%BC%8F"><span class="nav-number">3.4.1.</span> <span class="nav-text">管理方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E4%BD%93%E9%97%B4%E7%9A%84%E7%BB%91%E5%AE%9A%E5%92%8C%E4%BA%8B%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.5.</span> <span class="nav-text">物体间的绑定和事件系统</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ximu"
+      src="/logo/logo.png">
+  <p class="site-author-name" itemprop="name">Ximu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ximu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -145,6 +145,202 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/11/16/games104%E7%AC%94%E8%AE%B01-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/11/16/games104%E7%AC%94%E8%AE%B01-3/" class="post-title-link" itemprop="url">games104笔记1-3</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-16 10:24:52 / 修改时间：18:18:47" itemprop="dateCreated datePublished" datetime="2023-11-16T10:24:52+08:00">2023-11-16</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第一课"><a href="#第一课" class="headerlink" title="第一课"></a>第一课</h1><p>游戏引擎的定义：构建黑客帝国的底层框架。</p>
+<p>游戏引擎不仅仅是渲染，还有更多。</p>
+<p>一些游戏引擎的关键点：实时渲染、创作工具（面对各行各业的需求者）、开发平台（面对游戏开发者，尤其是程序员）、工作流（整体框架设计）。</p>
+<p>课程目的：建立现代游戏引擎设计的知识体系框架。</p>
+<p>课程内容：</p>
+<ol>
+<li>游戏引擎的层次结构</li>
+<li>渲染（各种算法的组成方式与结构）</li>
+<li>动画</li>
+<li>物理</li>
+<li>gameplay系统</li>
+<li>特效系统</li>
+<li>工具系统</li>
+<li>网络</li>
+<li>线程同步</li>
+<li>前沿技术</li>
+</ol>
+<h1 id="第二课"><a href="#第二课" class="headerlink" title="第二课"></a>第二课</h1><h2 id="游戏引擎的层次"><a href="#游戏引擎的层次" class="headerlink" title="游戏引擎的层次"></a>游戏引擎的层次</h2><ol>
+<li>工具层：用户可以直接看到、直接操作的部分。</li>
+<li>功能层：画面渲染、场景运动等。</li>
+<li>资源层：游戏中用于工作的资源。</li>
+<li>核心层：支持引擎的各种工作。</li>
+<li>平台层：处理各种平台的工作。</li>
+</ol>
+<h2 id="挑战：用引擎的层次创建一个会动的小人"><a href="#挑战：用引擎的层次创建一个会动的小人" class="headerlink" title="挑战：用引擎的层次创建一个会动的小人"></a>挑战：用引擎的层次创建一个会动的小人</h2><ol>
+<li>资源的导入：<br>由于我们常用的文件有很多格式如fbx、glb等。如果在引擎中使用各种格式的文件的话，会徒增非常多的工作量。所以我们在导入文件的时候会进行一次转化，将之转化为高效的引擎资源。从而便于用户操作，并提高性能。存入的资产有很多类型，并且在引擎中会被多次使用，且资源之间有很多关联，所以我们会用一个GUID来标记资源，便于资源管理。</li>
+<li>资源层的工作：<br> 管理所有的资源。</li>
+<li>功能层的工作：<br> 通过ticks来实现每一帧的工作。一般来说ticks分为逻辑和渲染两个部分。逻辑部分实现物理、游戏逻辑等工作，而渲染部分则负责画面效果的绘制。</li>
+<li>核心层的工作：<br>为各种数学运算提供支持、为上层提供可操作的数据结构、内存分配管理（为了更高的效率）。质量要求最高的一层。</li>
+<li>平台层：将各个平台使用的不同的api进行封装，使得引擎可以在不同平台进行工作。</li>
+<li>工具层：提供GUI来让用户来进行编辑（包括：逻辑、动画、场景、资源等）。</li>
+</ol>
+<h2 id="为什么引擎要分层："><a href="#为什么引擎要分层：" class="headerlink" title="为什么引擎要分层："></a>为什么引擎要分层：</h2><p><strong>为了降低复杂度：</strong><br><strong>每一层负责每一层的工作，封装各个部分后可以让人不需要在意底层的工作内容。</strong></p>
+<p>同时越是底层的东西越不要去更改他，分层结构的特点就是越往上越灵活，越往下越稳定。在做任何事的时候都需要考虑这部分工作处于哪一层。同时底层不允许去调用上层的api。（最重要的思想）</p>
+<p>课程引擎在哪找？等我去找找。PILOT。</p>
+<p>找到了：<br><a target="_blank" rel="noopener" href="https://github.com/BoomingTech/Piccolo">https://github.com/BoomingTech/Piccolo</a></p>
+<h1 id="第三课"><a href="#第三课" class="headerlink" title="第三课"></a>第三课</h1><h2 id="gameplay中的各个组成元素"><a href="#gameplay中的各个组成元素" class="headerlink" title="gameplay中的各个组成元素"></a>gameplay中的各个组成元素</h2><ol>
+<li>动态物</li>
+<li>静态物</li>
+<li>地形系统</li>
+<li>天空</li>
+<li>其他</li>
+</ol>
+<h3 id="游戏对象："><a href="#游戏对象：" class="headerlink" title="游戏对象："></a>游戏对象：</h3><p>上述元素，在引擎中，我们会将他们抽象为game object。通过Game Object，我们就可以制作游戏了。</p>
+<p>一般来说，一个Game Object只需要属性和行为，便可以用来描述所有东西。落实到各个物体中，我们便可以将其抽象成一个类对象。</p>
+
+<p>上图无人机类的设计中，我们可以考虑使用继承的思路来进行game object的设计。但是这种方法虽然简单易懂，但是随着我们的物体越来越多，物体间的关系却越来越模糊（水陆两栖坦克到底继承自坦克还是船呢？）如何解决这种问题？现代引擎使用的思路是使用组件的方式来进行设计。</p>
+
+<p>将各个功能对应到对应的组件，每个game object则是由组件组成的。例如一个无人机由位置、机身、机翅、摄像头等组件组成。</p>
+<h2 id="运动"><a href="#运动" class="headerlink" title="运动:"></a>运动:</h2><p>有了游戏对象，我们可以设置好游戏的场景和游戏对象。但是如何让他们动起来呢？每一帧让每一个game object来进行他们的工作。只要帧数足够高，场景便运动了起来。但是顺序工作的工作效率是非常低的。为了达到更高的效率，tick系统中，我们会通过流水线的方式来进行优化。</p>
+<h2 id="交互："><a href="#交互：" class="headerlink" title="交互："></a>交互：</h2><ol>
+<li>Hardcode：做线性遍历，进行判断。</li>
+<li>Events：给目标物体添加event，让其在其tick中进行处理</li>
+</ol>
+<p>两者的区别在于events进行了解耦合，变得简单且干净（嗯呗）。</p>
+<h2 id="管理物体"><a href="#管理物体" class="headerlink" title="管理物体:"></a>管理物体:</h2><p>每个game object中会设置对应的id（区别于资源的GUID）。</p>
+<h3 id="管理方式"><a href="#管理方式" class="headerlink" title="管理方式"></a>管理方式</h3><ol>
+<li>不管理：对所有物体进行位置的判断。</li>
+<li>空间划分：哈希和八叉树以及其他的分割方式。</li>
+</ol>
+<h2 id="物体间的绑定和事件系统"><a href="#物体间的绑定和事件系统" class="headerlink" title="物体间的绑定和事件系统"></a>物体间的绑定和事件系统</h2><p>物体间是有父子关系的。那么在tick中，我们tick时的操作顺序是什么样的呢？一般是由父物体到子物体。</p>
+<p>事件系统我们在上面已经描述过了，这里说一个事件消息系统的问题：产生消息后，物体的执行时机。具体的执行顺序受到很多东西的影响：软件上算法的实现比如是在受到消息后立即执行还是延迟到下一个tick执行；硬件也会影响，比如有多线程的计算设备通过多线程的方式计算会获得不确定的结果等。消息系统的设计也是非常重要的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/11/07/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A003/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/logo/logo.png">
+      <meta itemprop="name" content="Ximu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ximu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/11/07/%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A003/" class="post-title-link" itemprop="url">算法学习03</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-11-07 10:41:36" itemprop="dateCreated datePublished" datetime="2023-11-07T10:41:36+08:00">2023-11-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-11-16 10:14:40" itemprop="dateModified" datetime="2023-11-16T10:14:40+08:00">2023-11-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="旧题复习"><a href="#旧题复习" class="headerlink" title="旧题复习"></a>旧题复习</h1><h2 id="长度最小的子数组"><a href="#长度最小的子数组" class="headerlink" title="长度最小的子数组"></a>长度最小的子数组</h2><p>给定一个含有 n 个正整数的数组和一个正整数 target 。找出该数组中满足其总和大于等于target 的长度最小的 连续子数组 [numsl, numsl+1, …, numsr-1, numsr] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。</p>
+<p>题目链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/minimum-size-subarray-sum/">https://leetcode.cn/problems/minimum-size-subarray-sum/</a></p>
+<p>本题采用思路为双指针的方法来创建一个滑动窗口，定义一个滑动窗口需要的数据包括：头指针、尾指针、元素数量、元素和。</p>
+<p>每一次循环需要做的工作是判断是当前元素和是否大于阈值，如果大于的话尾指针向前，总和减去尾指针之前指向的数据。如果小于的话则将头指针向前并将新的元素加入总和中。在此过程中，我们记录每一次超过阈值的数据的滑动窗口元素数量，记录最小数量。完成循环后返回该值即可。</p>
+<p>以下为代码:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">minSubArrayLen</span><span class="params">(<span class="type">int</span> target, vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums.<span class="built_in">size</span>()==<span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> res = INT_MAX;</span><br><span class="line">        <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> winSize = <span class="number">0</span>;</span><br><span class="line">        <span class="type">int</span> p = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;=nums.<span class="built_in">size</span>();)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(sum&gt;=target)</span><br><span class="line">            &#123;</span><br><span class="line">                sum-=nums[p];</span><br><span class="line">                p++;</span><br><span class="line">                <span class="keyword">if</span>(winSize&lt;res)</span><br><span class="line">                &#123;</span><br><span class="line">                    res = winSize;</span><br><span class="line">                &#125;</span><br><span class="line">                winSize--;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(i!=nums.<span class="built_in">size</span>())</span><br><span class="line">            &#123;</span><br><span class="line">                sum+=nums[i];</span><br><span class="line">                winSize++;</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                i++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res==INT_MAX)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><h2 id="目标和"><a href="#目标和" class="headerlink" title="目标和"></a>目标和</h2><p>给你一个非负整数数组 nums 和一个整数 target 。向数组中的每个整数前添加 ‘+’ 或 ‘-‘ ，然后串联起所有整数，可以构造一个 表达式 ：例如，nums = [2, 1] ，可以在 2 之前添加 ‘+’ ，在 1 之前添加 ‘-‘ ，然后串联起来得到表达式 “+2-1” 。返回可以通过上述方法构造的、运算结果等于 target 的不同 表达式 的数目。</p>
+<p>原题链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/target-sum/">https://leetcode.cn/problems/target-sum/</a></p>
+<p>思路：本题可以通过回溯的方法将所有的组合都找到，但是这样做在leetcode上会超时（暴力遍历不可取）。本题目可以采用动态规划的思想,动态规划的本质是将问题拆分成可以解决的小问题，通过小问题递推出大问题的答案。</p>
+<p>这个题目要如何分解呢？我们可以这样解读问题：假设一个数组的可以分为两部分，一部分的和等于另外一部分加上target。这是我们对问题的第一次分解。如此，我们还可以继续分解：在数组的一部分和为（target+数组和）/ 2时（部分a - 部分b = 部分a -（总和sum - 部分a）= target ==&gt; 部分a = （总和sum + target）/ 2），有多少种组合。分解到这一步，我们就可以考虑使用dp数组来存储组合数量了，设定dp[j]代表在容量为j下（也就是部分和为a时），有dp[j]种方法。有了dp数组之后，便可以确定递推公式：<strong>dp[j] += dp[j - nums[i]]</strong></p>
+<p>由于j本身是数组之中各种组合的和，那么j-当前遍历的数就代表了缺少当前数的状态，一轮nums的遍历之后就是将能够凑到j的数据找到并作为一种结果存入dp数组中。由此可以通过这种方式来进行递推，从而获取结果。<strong>类似于上楼梯问题，每一种情况都是能到达这种情况的其他几种情况的组合的和</strong></p>
+<p>由此代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">findTargetSumWays</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> target)</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="type">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)<span class="comment">//求数组和</span></span><br><span class="line">        &#123;</span><br><span class="line">            sum+=nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sum&lt;<span class="built_in">abs</span>(target))<span class="comment">//如果和的大小小于目标值</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>((target + sum) % <span class="number">2</span> == <span class="number">1</span>)<span class="comment">//判断能否获得目标值的和</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> bagsize = (target + sum) / <span class="number">2</span>;<span class="comment">//设置背包大小</span></span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dp</span><span class="params">(bagsize+<span class="number">1</span>,<span class="number">0</span>)</span></span>;<span class="comment">//设置背包</span></span><br><span class="line">        dp[<span class="number">0</span>] = <span class="number">1</span>;<span class="comment">//初始情况为1，也就是数组元素值等于目标值时有一种组合</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; nums.<span class="built_in">size</span>();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> j = bagsize;j&gt;=nums[i];j--)<span class="comment">//上楼梯的方法统计</span></span><br><span class="line">            &#123;</span><br><span class="line">                 dp[j] += dp[j - nums[i]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[bagsize];<span class="comment">//返回目标值</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/09/18/games101%E7%AC%94%E8%AE%B022/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -271,7 +467,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-18 16:25:52" itemprop="dateModified" datetime="2023-09-18T16:25:52+08:00">2023-09-18</time>
+                <time title="修改时间：2023-10-11 21:34:21" itemprop="dateModified" datetime="2023-10-11T21:34:21+08:00">2023-10-11</time>
               </span>
 
           
@@ -389,6 +585,9 @@
 <p>我们现在再来看策略模式的定义：</p>
 <p>策略模式是一种定义一系列算法的方法，从概念上来看，所有这些算法完成的都是相同的工作，只是实现不同，它可以以相同的方式调用所有的算法，减少了各种算法类与使用算法类之间的耦合。</p>
 <h3 id="策略模式和工厂模式的区别"><a href="#策略模式和工厂模式的区别" class="headerlink" title="策略模式和工厂模式的区别"></a>策略模式和工厂模式的区别</h3><p>策略模式主要是为了选择具体的算法对象，而工厂模式主要是为了产生具体的对象（创建合适对象）。因此，策略模式比较适合于算法的选择，而工厂模式则适合大量对象的生产。同时策略对象中的策略是可以相互替换的，但是工厂模式中的工厂类则对应了多个类，这是一种一对多的关系。</p>
+<h2 id="第三章"><a href="#第三章" class="headerlink" title="第三章"></a>第三章</h2><h3 id="单一职责原则"><a href="#单一职责原则" class="headerlink" title="单一职责原则"></a>单一职责原则</h3><p>就一个类而言，应该仅有一个引起它变化的原因[ASD]（开放封闭原则）。一个类如果负责实现多个功能可能会造成修改或是增加一个功能时会使得其他功能产生一定的变化。这种耦合会导致脆弱的设计，当变化发生时，设计会遭受到意想不到的破坏[ASD]。</p>
+<p>在书中提到了俄罗斯方块这个游戏，游戏的底层功能逻辑是不变的，但是gui界面是多变了（手机端、pc端、不同的GUI选择）。所以可以将功能写在一个类中，这样在移植时就可以减少代码量了。</p>
+<p>在做某一功能的实现时要多考虑是否利于开发者来进行功能拓展，该方法对于其他功能的影响大不大，基于上述两点，我们可以选择是否要做减少类的功能来遵守单一职责原则。</p>
 
       
     </div>
@@ -1402,225 +1601,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/08/30/7-9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/logo/logo.png">
-      <meta itemprop="name" content="Ximu">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ximu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/30/7-9/" class="post-title-link" itemprop="url">games101笔记7-9</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-30 13:19:16" itemprop="dateCreated datePublished" datetime="2023-08-30T13:19:16+08:00">2023-08-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-15 09:29:44" itemprop="dateModified" datetime="2023-09-15T09:29:44+08:00">2023-09-15</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Games101-Note-7-9"><a href="#Games101-Note-7-9" class="headerlink" title="Games101 Note 7-9"></a>Games101 Note 7-9</h1><h2 id="第七课"><a href="#第七课" class="headerlink" title="第七课"></a>第七课</h2><h3 id="可见性问题"><a href="#可见性问题" class="headerlink" title="可见性问题"></a>可见性问题</h3><p>要将物品放在场景中，我们要怎么解决放置顺序问题？一个简单的想法是通过先远再近的方法，用前面的物体挡住后面的物体。放在光栅化的过程中就是先光栅化远处的东西，再光栅化近处的东西，这个称之为<strong>画家算法</strong>。</p>
-<p>例如绘制一个立方体：</p>
-<p>先画最远的面</p>
-<p><img src="/images/2023-08-30-13-28-20.png" alt></p>
-<p>在画中间的面：</p>
-<p><img src="/images/2023-08-30-13-28-51.png" alt></p>
-<p>最后画最前面的面：</p>
-<p><img src="/images/2023-08-30-13-29-08.png" alt></p>
-<p>但是计算深度是很麻烦的事情，同时，如果出现一些特殊情况则很难使用画家算法处理例如：</p>
-<p><img src="/images/2023-08-30-13-31-19.png" alt></p>
-<p>上述两两间有覆盖关系的图片就很难获得正确的深度关系。</p>
-<h4 id="深度缓存"><a href="#深度缓存" class="headerlink" title="深度缓存"></a>深度缓存</h4><p>深度缓存就是用来解决可见性问题的，该算法的思想为：对每一个像素来进行深度的排序（因为像素的深度是确定的）。使用z-buffer会获得两个结果，一个是输出的画面结果，一个是深度缓存。</p>
-<p>例如：</p>
-<p><img src="/images/2023-08-30-13-36-05.png" alt></p>
-<p>Z-buffer图中可以看到，距离越近越黑。</p>
-<p> 算法过程：</p>
-<p> 一开始深度缓存的距离都是无限远的，对于任意一个三角面片，我们将任意像素的深度与缓存深度做比较，如果新的像素距离近，则绘制再输出图片上，同时更新深度缓存，否则不绘制，不更新。<br> <img src="/images/2023-08-30-14-37-53.png" alt></p>
-<p> 算法复杂度O(n)，n为三角面片数量。</p>
-<p>注：Z-Buffer不能处理透明物体</p>
-<h3 id="着色-Shading"><a href="#着色-Shading" class="headerlink" title="着色(Shading)"></a>着色(Shading)</h3><p>计算一个着色点的颜色需要三个向量：<br>光的反射方向、被照射点的法向量、观察方向。同时还需要被照射点的颜色信息（颜色、反射光的能力等）。</p>
-<p>注意：着色阶段只计算物体对应的颜色，不会考虑阴影。</p>
-<p>在照射的过程中，会产生两个方面的光照能量的变化：</p>
-<p>1.照射物体表面获得的能量：</p>
-<p><img src="/images/2023-08-30-16-34-18.png" alt></p>
-<p>漫反射位置所接收到的光与其法线夹角有关。接收光强与夹角的cos值成正比。</p>
-<p>2.入射光衰减的能量：</p>
-<p>一个光的能量发散出去后会随着距离衰减（总能量不变）</p>
-<p><img src="/images/2023-08-30-16-37-42.png" alt></p>
-<p>由上述内容，我们可以推断出一个点光照后的颜色信息：</p>
-<p><img src="/images/2023-08-30-16-38-54.png" alt></p>
-<p>我们定义光的单位距离上的强度为I，到达照射点的距离为r，则到达能量为I/r的平方，然后n点乘l表示该点能够接收到的能量（kd为照射点吸收光的能力，值在0-1之间，n点成l小于0没意义是因为为0时是从物体内部射出的光无意义不计算）。最后我们可以获得反射到人眼中的光颜色Ld。（漫反射的话反射到的是所有方向，所以和观察方向无关，因为在哪观察结果相同。）</p>
-<p>下图是kd不同的效果：</p>
-<p><img src="/images/2023-08-30-16-46-39.png" alt></p>
-<h2 id="第八课"><a href="#第八课" class="headerlink" title="第八课"></a>第八课</h2><h3 id="着色（接上节）"><a href="#着色（接上节）" class="headerlink" title="着色（接上节）"></a>着色（接上节）</h3><p>高光的计算：</p>
-<p><img src="/images/2023-08-30-17-16-51.png" alt></p>
-<p>光滑物体的反射一般是类似于镜面反射的方向（没有镜子光滑的物体的反射会在直接反射的附近，如图片中黄色部分）。当我们的V和R接进的时候会观察到高光。直接使用R和V的夹角来计算高光称为Phong模型，使用这种方式计算计算量较大。下面介绍一种改进方法：</p>
-<p><img src="/images/2023-08-30-17-18-56.png" alt></p>
-<p>在Blinn-Phong（经验模型）中使用一个半程向量（l和v的角平分向量）来计算是否接近镜面反射向量。我们只需要计算半程向量和法向量的夹角。所以Ls（高光）的求取方式为反射系数<em>衰减量</em>n点成半程向量。</p>
-<p>上述式子中的指数p是用于降低容忍度的，如下图：<br><img src="/images/2023-08-30-17-27-29.png" alt></p>
-<p>如果直接使用cos值，会发现就算离得很远都会显示较多的高光。添加指数可以降低容忍度。</p>
-<p>下图展示不同的指数p和k带来的结果变化：</p>
-<p><img src="/images/2023-08-30-17-33-11.png" alt></p>
-<p>环境光计算：</p>
-<p>假设任何一个点接收到的环境光都是相同的且来自四面八方。则有：</p>
-<p><img src="/images/2023-08-30-17-34-49.png" alt></p>
-<p>环境光不考虑任何入射方向也不影响任何。</p>
-<p>光照反射的结果为Ld+Ls+La即漫反射光+高光+环境光。</p>
-<p><img src="/images/2023-08-30-17-37-16.png" alt></p>
-<p>我们只需要对所有的像素点进行着色的计算，就可以让玩家看到场景中受光照的物体了。</p>
-<h3 id="着色频率"><a href="#着色频率" class="headerlink" title="着色频率"></a>着色频率</h3><p>着色频率用来确定我们的着色要用在哪些点上。</p>
-<p><img src="/images/2023-08-30-17-42-01.png" alt></p>
-<p>上述图片第一个对各个面进行着色，第二个对顶点进行了着色，第三个对所有像素进行了着色。</p>
-<p>对所有的三角形面片进行着色称flat shading，对任意顶点进行着色称为Gouraud shading，对所有像素进行着色称为Phong shading。这是三种着色频率。着色频率的选择其实取决于模型的复杂程度和具体物体。</p>
-<p>如果抛开性能需求，Phong shading是较好的选择。</p>
-<p><img src="/images/2023-08-30-17-49-26.png" alt></p>
-<p>如何获每个顶点的法线呢？</p>
-<p>我们可以通过相邻面的法线来求平均：<br><img src="/images/2023-08-30-17-51-58.png" alt><br>我们还可以根据相邻面的大小来做一个权值的划分再求平均能够获得更好的效果。</p>
-<h3 id="渲染管线"><a href="#渲染管线" class="headerlink" title="渲染管线"></a>渲染管线</h3><p>我们将前面做的工作合并起来，就会获得的图形管线（实时渲染管线）。</p>
-<p>简化过程：<br>输入空间中的点-&gt;进行投影将三维的点投影到二维屏幕上-&gt;点形成三角形-&gt;光栅化离散为像素-&gt;进行着色-&gt;输出图像。</p>
-<p>三角形就是由三个点所定义的，所以只需要对顶点进行3d到2d的变换（投影变换）。</p>
-<p><img src="/images/2023-08-30-17-59-27.png" alt></p>
-<p>Gouraud shading发生在顶点处理阶段，而Phong shading发生在像素着色阶段。</p>
-<p>而管理各个部分的工作如何去定义就可以通过shader来实现（shader是用来管理顶点和像素是如何着色的代码）。</p>
-<h3 id="shader编程"><a href="#shader编程" class="headerlink" title="shader编程"></a>shader编程</h3><p>现代GPU是运行我们来进行着色方法的设定的。</p>
-<p><img src="/images/2023-08-30-18-05-53.png" alt></p>
-<p>上图为一个片段着色器的（基于GLSL）。全局变量为2d纹理、光照方向。输入了uv以及对应像素的法线。在像素中计算漫反射系数kd，然后计算漫反射，然后返回该像素的颜色值。</p>
-<p>可以写shader的网站：<br><a target="_blank" rel="noopener" href="http://shadertoy.com/">http://shadertoy.com/</a></p>
-<h3 id="纹理映射"><a href="#纹理映射" class="headerlink" title="纹理映射"></a>纹理映射</h3><p>对于一个物体，任何一个点上面的具有一个特定的漫反射系数，让我们对不同的位置有不同的着色效果。</p>
-<p>任何三维物体的表面都是二维的（三维物体的表面可以展开为二维图像），纹理映射就是将物体表面的点映射到纹理上面的点。</p>
-<p><strong>uv</strong>：值都在0-1之内，用于将模型上的顶点对应到纹理图片上。是将物体表面展开在一个坐标系内的技术横轴为u竖轴为v。</p>
-<p>纹理设计得好的话在重复的时候不会看出有分割的感觉。</p>
-<h2 id="第九课"><a href="#第九课" class="headerlink" title="第九课"></a>第九课</h2><h3 id="着色（继续接上节）"><a href="#着色（继续接上节）" class="headerlink" title="着色（继续接上节）"></a>着色（继续接上节）</h3><p> 三角形内部的插值：首先计算重心坐标<br> <img src="/images/2023-08-31-10-26-17.png" alt><br> 三角形中的任意一个点，都可以用三角形的三个角坐标加上三个系数来表示。三个系数需要满足和为1。所以我们的重心坐标可以用三个系数来表示（三个系数不能为负数，否则不在三角形内）。</p>
-<p> 三个角的坐标可以用（1，0，0）（0，1，0）（0，0，1）来表示。</p>
-<p> <img src="/images/2023-08-31-10-32-15.png" alt></p>
-<p> 三个系数的求取方式如上，任意一点的系数为其对应顶点对面的面积比上三角形总面积。</p>
-<p> 三角形的重心其三个系数都为1/3。<br><img src="/images/2023-08-31-10-36-06.png" alt></p>
-<p>获取重心坐标后，我们可以使用重心坐标来做插值。但是不能用投影过后的三角形来做插值，因为会丢失三角形的像素的深度。</p>
-<h3 id="纹理的应用"><a href="#纹理的应用" class="headerlink" title="纹理的应用"></a>纹理的应用</h3><p>纹理上原本就已经通过uv将网格顶点放在了纹理上，面片中的插值则可以直接通过上述的求法来获得对应纹理上的颜色。纹理上的color可以用来当做漫反射系数（Phong模型中）。</p>
-<p>使用上述思路可能会产生一些问题。</p>
-<ol>
-<li>纹理放大问题：如果我们使用的纹理图片较小，但是我们要将其显示到一个较大分辨率的屏幕上，这样的话纹理会被拉大。解决这个问题我们提出两个概念pixel（显示设备上的像素）、texel（纹理的像素）。由于显示分辨率高，纹理小，所以会有更多的pixel用于显示一个texel。我们可以通过pixel周围的四个texel进行线性插值。<br><img src="/images/2023-08-31-11-03-59.png" alt><br>这样就可以获得一个有过度的绘制效果了，不会像第一种方法一样有明显的颗粒感。</li>
-</ol>
-<p>我们还可以用周围的16个texel来进行线性插值。各种效果如下：<br><img src="/images/2023-08-31-11-23-02.png" alt></p>
-<ol>
-<li><p>如果纹理距离观测点的位置较远，就容易产生摩尔纹和走样问题。走样我们可以使用msaa来解决，但是这会增加运算量。我们分析问题产生的原因：采样对象变化速度过快，我们的采样频率不够。解决方法是，我们可以采取不采样的策略。对应的概念为：<strong>Mipmap</strong>。mipmap允许做范围查询，但是其结果不准确，同时他只能做近似正方形的范围查询。其具体原理如下：<br><img src="/images/2023-08-31-11-37-03.png" alt><br>每一个等级将大小减半（在渲染前求出这些等级图片）。<br><img src="/images/2023-08-31-11-37-46.png" alt><br>（CV界叫做图像金字塔，CG称为mipmap）<br>每一等级设为D0到Dn。我们在原本的材质的基础上，多用用了原图像的1/3的大小来存储多出的材质。<br><img src="/images/2023-08-31-11-52-08.png" alt><br>这是一个近似的思路，我们通过一个像素点上方和右边的像素映射到uv图中，在其中求取像素点之间的距离。将这个距离近似为一个正方形，我们通过正方形L的边长来选择需要使用的mipmap的等级。但是在这之间可能会出现结果不为整数的情况，如果出现这样的情况会出现颗粒感，所以我们可以在对应等级的mipmap D和D+1上进行线性插值（三线性插值）。</p>
-<p>但是太远的位置会出现信息丢失：<br><img src="/images/2023-08-31-12-05-09.png" alt><br>原因是使用的正方形近似。我们可以通过各向异性过滤来进行优化。<br><img src="/images/2023-08-31-12-06-56.png" alt><br>相较于mipmap，这种方法还记录了水平和竖直方向的压缩的纹理，这样在较远位置（尤其是有倾斜的情况下）我们可以找到对应的近似来进行绘制：<br><img src="/images/2023-08-31-12-08-13.png" alt><br>虽然效果好但是各向异性的纹理存储开销变成了原来的三倍。</p>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://ximu3df.github.io/2023/08/29/games101%E5%89%8D%E6%9C%9F%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/logo/logo.png">
-      <meta itemprop="name" content="Ximu">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ximu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/29/games101%E5%89%8D%E6%9C%9F%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">games101前期总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-29 21:19:25" itemprop="dateCreated datePublished" datetime="2023-08-29T21:19:25+08:00">2023-08-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-08-31 22:44:13" itemprop="dateModified" datetime="2023-08-31T22:44:13+08:00">2023-08-31</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近有时间可以继续图形方面的学习，现在继续更新一下内容。<br>回忆一下之前已经学习的内容：</p>
-<h1 id="1-3课"><a href="#1-3课" class="headerlink" title="1-3课"></a>1-3课</h1><p><img src="/images/2023-08-30-12-17-45.png" alt></p>
-<h1 id="4-6"><a href="#4-6" class="headerlink" title="4-6"></a>4-6</h1><p><img src="/images/2023-08-30-13-07-58.png" alt></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1692,12 +1672,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
